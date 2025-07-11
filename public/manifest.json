@@ -36,7 +36,6 @@
       "js": [
         "modules/ProductExtractor.js",
         "modules/SidebarManager.js", 
-        "modules/ButtonManager.js",
         "modules/NotificationManager.js",
         "content.js"
       ],

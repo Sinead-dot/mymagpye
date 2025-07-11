@@ -1,5 +1,5 @@
 
-// MyMagPye Content Script - Refactored
+// MyMagPye Content Script - MindStudio Style Integration
 class MyMagPyeExtension {
   constructor() {
     this.productData = null;
@@ -8,14 +8,14 @@ class MyMagPyeExtension {
     // Initialize managers
     this.productExtractor = new ProductExtractor();
     this.sidebarManager = new SidebarManager();
-    this.buttonManager = new ButtonManager();
     this.notificationManager = new NotificationManager();
+    // Remove ButtonManager as we're integrating into sidebar
     
     this.init();
   }
 
   init() {
-    console.log('🔍 MyMagPye extension loading...');
+    console.log('🔍 MyMagPye extension loading (MindStudio style)...');
     
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => this.setupExtension());
@@ -32,15 +32,15 @@ class MyMagPyeExtension {
     
     console.log('🔍 Setting up MyMagPye on:', window.location.hostname);
     
-    // Create UI components
+    // Create MindStudio-style sidebar
     this.sidebarManager.createSidebar();
-    this.buttonManager.createToggleButton(() => this.sidebarManager.toggleSidebar());
     
     // Extract product data
     this.productData = this.productExtractor.extractProductData();
     
     if (this.productData) {
-      this.buttonManager.createSaveButton(() => this.saveProduct());
+      // Display current product in sidebar
+      this.sidebarManager.displayCurrentProduct(this.productData);
       console.log('✅ MyMagPye: Product detected', this.productData);
     }
     
@@ -53,7 +53,12 @@ class MyMagPyeExtension {
       return;
     }
     
-    this.buttonManager.updateSaveButton('⏳ Saving...', true);
+    // Show loading state in sidebar
+    const huntBtn = document.querySelector('#mymagpye-quick-hunt');
+    if (huntBtn) {
+      huntBtn.textContent = '⏳ Hunting...';
+      huntBtn.disabled = true;
+    }
     
     try {
       const result = await chrome.storage.local.get(['savedItems']);
@@ -62,7 +67,9 @@ class MyMagPyeExtension {
       const exists = savedItems.some(item => item.url === this.productData.url);
       if (exists) {
         this.notificationManager.showNotification('Already hunting for this item!', 'info');
-        this.buttonManager.updateSaveButton('✅ Already Saved');
+        if (huntBtn) {
+          huntBtn.textContent = '✅ Already Saved';
+        }
         return;
       }
       
@@ -81,18 +88,29 @@ class MyMagPyeExtension {
       });
       
       this.notificationManager.showNotification('Started hunting for better deals! 🏴‍☠️', 'success');
-      this.buttonManager.updateSaveButton('✅ Hunt Started');
       
-      if (this.sidebarManager.sidebarOpen) {
-        this.sidebarManager.loadSidebarData();
+      if (huntBtn) {
+        huntBtn.textContent = '✅ Hunt Started';
       }
+      
+      // Refresh sidebar data
+      this.sidebarManager.loadSidebarData();
       
       console.log('✅ Product saved and hunt started:', this.productData.title);
       
     } catch (error) {
       console.error('Error saving product:', error);
       this.notificationManager.showNotification('Error starting hunt', 'error');
-      this.buttonManager.updateSaveButton('❌ Error');
+      if (huntBtn) {
+        huntBtn.textContent = '❌ Error';
+      }
+    } finally {
+      if (huntBtn) {
+        setTimeout(() => {
+          huntBtn.disabled = false;
+          huntBtn.textContent = '🔍 Hunt';
+        }, 2000);
+      }
     }
   }
 
@@ -128,7 +146,6 @@ const loadScript = (src) => {
 Promise.all([
   loadScript('modules/ProductExtractor.js'),
   loadScript('modules/SidebarManager.js'),
-  loadScript('modules/ButtonManager.js'),
   loadScript('modules/NotificationManager.js')
 ]).then(() => {
   window.myMagPyeExtension = new MyMagPyeExtension();

@@ -1,374 +1,377 @@
 
-.mymagpye-save-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  margin: 10px 0;
-  font-size: 14px;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-  transition: all 0.3s ease;
-  z-index: 10000;
-  position: relative;
+/* MyMagPye Extension - MindStudio Style */
+
+/* Main sidebar container */
+.mymagpye-sidebar-mindstudio {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  width: 320px !important;
+  height: 100vh !important;
+  background: #ffffff !important;
+  border-left: 1px solid #e5e7eb !important;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1) !important;
+  z-index: 2147483647 !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  display: flex !important;
+  flex-direction: column !important;
+  transition: transform 0.3s ease !important;
+  overflow: hidden !important;
 }
 
-.mymagpye-save-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+@media (max-width: 1200px) {
+  .mymagpye-sidebar-mindstudio {
+    width: 280px !important;
+  }
 }
 
-.mymagpye-save-btn:disabled {
-  background: #6b7280;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Toggle Button */
-.mymagpye-toggle-btn {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  z-index: 10002;
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
-  transition: all 0.3s ease;
-}
-
-.mymagpye-toggle-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
-}
-
-/* Sidebar */
-.mymagpye-sidebar {
-  position: fixed;
-  top: 0;
-  right: -400px;
-  width: 400px;
-  height: 100vh;
-  background: white;
-  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
-  z-index: 10001;
-  transition: right 0.3s ease;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  display: flex;
-  flex-direction: column;
-}
-
-.mymagpye-sidebar-open {
-  right: 0;
-}
-
+/* Header */
 .mymagpye-sidebar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  padding: 16px 20px !important;
+  border-bottom: 1px solid #f3f4f6 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  background: #fafafa !important;
+  min-height: 60px !important;
 }
 
 .mymagpye-sidebar-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
 }
 
 .mymagpye-logo-icon {
-  font-size: 24px;
+  font-size: 20px !important;
 }
 
 .mymagpye-logo-text {
-  font-size: 18px;
-  font-weight: bold;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  color: #667eea !important;
 }
 
-.mymagpye-close-btn {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 24px;
-  cursor: pointer;
-  padding: 5px;
-  line-height: 1;
+.mymagpye-minimize-btn {
+  background: #f3f4f6 !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 8px 12px !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  font-weight: bold !important;
+  color: #6b7280 !important;
+  transition: all 0.2s ease !important;
 }
 
-.mymagpye-close-btn:hover {
-  opacity: 0.8;
+.mymagpye-minimize-btn:hover {
+  background: #e5e7eb !important;
+  color: #374151 !important;
 }
 
+/* Content */
 .mymagpye-sidebar-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0;
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding: 0 !important;
 }
 
 .mymagpye-sidebar-section {
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #f3f4f6 !important;
+  padding: 16px 20px !important;
+}
+
+.mymagpye-sidebar-section:last-child {
+  border-bottom: none !important;
 }
 
 .mymagpye-sidebar-section h3 {
-  margin: 0;
-  padding: 20px 20px 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #374151;
+  margin: 0 0 12px 0 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
 }
 
-.mymagpye-items-list,
-.mymagpye-results-list {
-  padding: 0 20px 20px 20px;
+/* Current product card */
+.mymagpye-current-product-card {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  padding: 12px !important;
+  display: flex !important;
+  gap: 12px !important;
+  align-items: center !important;
 }
 
+.mymagpye-product-image {
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 6px !important;
+  object-fit: cover !important;
+  flex-shrink: 0 !important;
+}
+
+.mymagpye-product-info {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.mymagpye-product-title {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+  margin-bottom: 4px !important;
+  line-height: 1.3 !important;
+}
+
+.mymagpye-product-price {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #667eea !important;
+  margin-bottom: 2px !important;
+}
+
+.mymagpye-product-platform {
+  font-size: 11px !important;
+  color: #6b7280 !important;
+  text-transform: uppercase !important;
+}
+
+.mymagpye-hunt-btn {
+  background: #667eea !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 6px 10px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: background 0.2s ease !important;
+}
+
+.mymagpye-hunt-btn:hover {
+  background: #5a67d8 !important;
+}
+
+/* Items list */
 .mymagpye-sidebar-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  position: relative;
+  display: flex !important;
+  gap: 10px !important;
+  padding: 8px 0 !important;
+  border-bottom: 1px solid #f3f4f6 !important;
+  cursor: pointer !important;
+  transition: background 0.2s ease !important;
+  border-radius: 6px !important;
+  margin-bottom: 8px !important;
+  position: relative !important;
 }
 
 .mymagpye-sidebar-item:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transform: translateY(-1px);
+  background: #f8fafc !important;
+}
+
+.mymagpye-sidebar-item:last-child {
+  border-bottom: none !important;
+  margin-bottom: 0 !important;
 }
 
 .mymagpye-item-image {
-  width: 50px;
-  height: 50px;
-  border-radius: 6px;
-  object-fit: cover;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 4px !important;
+  object-fit: cover !important;
+  flex-shrink: 0 !important;
 }
 
 .mymagpye-item-info {
-  flex: 1;
-  min-width: 0;
+  flex: 1 !important;
+  min-width: 0 !important;
 }
 
 .mymagpye-item-title {
-  font-weight: bold;
-  font-size: 14px;
-  color: #1f2937;
-  margin-bottom: 4px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: #374151 !important;
+  margin-bottom: 4px !important;
+  line-height: 1.3 !important;
 }
 
 .mymagpye-item-price {
-  color: #667eea;
-  font-weight: bold;
-  font-size: 14px;
-  margin-bottom: 2px;
-}
-
-.mymagpye-item-platform {
-  color: #6b7280;
-  font-size: 12px;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #667eea !important;
 }
 
 .mymagpye-remove-btn {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background: #ef4444;
-  color: white;
-  border: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  font-size: 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.2s ease;
+  position: absolute !important;
+  top: 4px !important;
+  right: 4px !important;
+  background: #ef4444 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 20px !important;
+  height: 20px !important;
+  font-size: 12px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 0 !important;
+  transition: opacity 0.2s ease !important;
 }
 
 .mymagpye-sidebar-item:hover .mymagpye-remove-btn {
-  opacity: 1;
+  opacity: 1 !important;
 }
 
+/* Hunt results */
 .mymagpye-hunt-result {
-  background: #f9fafb;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 12px;
+  background: #f0f9ff !important;
+  border: 1px solid #e0f2fe !important;
+  border-radius: 6px !important;
+  padding: 10px !important;
+  margin-bottom: 8px !important;
+  cursor: pointer !important;
+  transition: background 0.2s ease !important;
 }
 
-.mymagpye-result-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
+.mymagpye-hunt-result:hover {
+  background: #e0f2fe !important;
 }
 
-.mymagpye-deals-count {
-  background: #10b981;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: bold;
+.mymagpye-result-summary {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 6px !important;
 }
 
-.mymagpye-deals-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.mymagpye-result-summary strong {
+  font-size: 12px !important;
+  color: #1f2937 !important;
 }
 
-.mymagpye-deal-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: white;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.mymagpye-deals-badge {
+  background: #10b981 !important;
+  color: white !important;
+  padding: 2px 6px !important;
+  border-radius: 10px !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
 }
 
-.mymagpye-deal-item:hover {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.mymagpye-deal-platform {
-  font-weight: bold;
-  color: #374151;
-  font-size: 12px;
-}
-
-.mymagpye-deal-price {
-  color: #667eea;
-  font-weight: bold;
-}
-
-.mymagpye-savings {
-  background: #10b981;
-  color: white;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: bold;
+.mymagpye-best-deal {
+  font-size: 11px !important;
+  color: #059669 !important;
+  font-weight: 600 !important;
 }
 
 .mymagpye-no-deals {
-  color: #6b7280;
-  font-style: italic;
-  text-align: center;
-  margin: 0;
+  font-size: 11px !important;
+  color: #6b7280 !important;
 }
 
+/* Show more indicator */
+.mymagpye-show-more {
+  text-align: center !important;
+  padding: 8px !important;
+  font-size: 11px !important;
+  color: #6b7280 !important;
+  background: #f9fafb !important;
+  border-radius: 4px !important;
+  margin-top: 8px !important;
+}
+
+/* Empty states */
 .mymagpye-empty-state {
-  text-align: center;
-  color: #6b7280;
-  padding: 20px;
+  text-align: center !important;
+  padding: 20px 10px !important;
+  color: #9ca3af !important;
 }
 
 .mymagpye-empty-icon {
-  font-size: 32px;
-  margin-bottom: 10px;
+  font-size: 32px !important;
+  margin-bottom: 8px !important;
 }
 
 .mymagpye-empty-state p {
-  margin: 5px 0;
-  font-weight: bold;
+  margin: 0 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
 }
 
-.mymagpye-empty-state small {
-  font-size: 12px;
-  line-height: 1.4;
-  opacity: 0.8;
-}
-
+/* Footer */
 .mymagpye-sidebar-footer {
-  padding: 20px;
-  border-top: 1px solid #e5e7eb;
-  background: #f9fafb;
+  padding: 16px 20px !important;
+  border-top: 1px solid #f3f4f6 !important;
+  background: #fafafa !important;
 }
 
 .mymagpye-full-app-btn {
-  width: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  width: 100% !important;
+  background: #667eea !important;
+  color: white !important;
+  border: none !important;
+  padding: 12px 16px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  transition: background 0.2s ease !important;
 }
 
 .mymagpye-full-app-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  background: #5a67d8 !important;
 }
 
-.mymagpye-notification {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  padding: 12px 24px;
-  border-radius: 8px;
-  color: white;
-  font-weight: bold;
-  z-index: 10001;
-  animation: slideIn 0.3s ease;
+/* Reopen tab when minimized */
+.mymagpye-reopen-tab {
+  position: fixed !important;
+  top: 50% !important;
+  right: 0 !important;
+  transform: translateY(-50%) !important;
+  background: #667eea !important;
+  color: white !important;
+  padding: 12px 8px !important;
+  border-radius: 8px 0 0 8px !important;
+  cursor: pointer !important;
+  z-index: 2147483647 !important;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2) !important;
+  font-size: 16px !important;
+  transition: all 0.2s ease !important;
 }
 
-.mymagpye-success {
-  background: #10b981;
+.mymagpye-reopen-tab:hover {
+  background: #5a67d8 !important;
+  padding-left: 12px !important;
 }
 
-.mymagpye-error {
-  background: #ef4444;
+/* Remove old button styles as we're integrating into sidebar */
+.mymagpye-save-btn {
+  display: none !important;
 }
 
-.mymagpye-info {
-  background: #3b82f6;
+.mymagpye-toggle-btn {
+  display: none !important;
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+/* Scrollbar styling */
+.mymagpye-sidebar-content::-webkit-scrollbar {
+  width: 6px !important;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .mymagpye-sidebar {
-    width: 100vw;
-    right: -100vw;
-  }
-  
-  .mymagpye-toggle-btn {
-    top: 10px;
-    right: 10px;
-    width: 45px;
-    height: 45px;
-    font-size: 18px;
-  }
+.mymagpye-sidebar-content::-webkit-scrollbar-track {
+  background: #f1f5f9 !important;
+}
+
+.mymagpye-sidebar-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1 !important;
+  border-radius: 3px !important;
+}
+
+.mymagpye-sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8 !important;
 }
