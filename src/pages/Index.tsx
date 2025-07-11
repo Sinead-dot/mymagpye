@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,68 +7,37 @@ import { Gem, Eye, Target, ShoppingBag, User, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
 import TreasureCard from "@/components/TreasureCard";
 import ExtensionSimulator from "@/components/ExtensionSimulator";
-import HuntingStats from "@/components/HuntingStats";
-import NotificationDemo from "@/components/NotificationDemo";
 import { useAuth } from '@/contexts/AuthContext';
-import AuthForm from '@/components/AuthForm';
-import UserProfile from '@/components/UserProfile';
 import { useToast } from '@/hooks/use-toast';
+import { useTreasures } from '@/hooks/useTreasures';
 
 const Index = () => {
-  const {
-    user,
-    loading,
-    signOut
-  } = useAuth();
-  const {
-    toast
-  } = useToast();
-  const [treasures, setTreasures] = useState([{
-    id: "1",
-    title: "Vintage Leather Jacket",
-    brand: "Unknown Brand",
-    platform: "Etsy",
-    url: "https://www.etsy.com/listing/123456789",
-    dateSpotted: "2024-03-15",
-    lastHunted: "2024-03-15",
-    price: 75.00,
-    image: "/placeholder.svg",
-    status: 'hunting' as const
-  }, {
-    id: "2",
-    title: "Retro Floral Dress",
-    brand: "Vintage Co",
-    platform: "eBay",
-    url: "https://www.ebay.com/itm/987654321",
-    dateSpotted: "2024-03-10",
-    lastHunted: "2024-03-10",
-    price: 45.50,
-    image: "/placeholder.svg",
-    status: 'hunting' as const
-  }, {
-    id: "3",
-    title: "Antique Silver Locket",
-    brand: "Antique Shop",
-    platform: "ThredUp",
-    url: "https://www.thredup.com/product/abcdefgh",
-    dateSpotted: "2024-03-05",
-    lastHunted: "2024-03-05",
-    price: 30.00,
-    image: "/placeholder.svg",
-    status: 'found' as const,
-    foundPrice: 25.00
-  }]);
+  const { user, loading, signOut } = useAuth();
+  const { toast } = useToast();
+  const { treasures, isLoading: treasuresLoading, addTreasure } = useTreasures();
 
   const handleProductSpotted = (product: any) => {
+    if (!user) {
+      toast({
+        title: "Sign In Required",
+        description: "Please sign in to save treasures",
+        variant: "destructive"
+      });
+      return;
+    }
+
     const newTreasure = {
-      ...product,
-      id: Date.now().toString(),
+      title: product.title,
       brand: product.brand || "Unknown Brand",
+      price: product.price || 0,
       image: product.image || "/placeholder.svg",
+      url: product.url,
+      platform: product.platform,
       status: 'hunting' as const,
-      lastHunted: new Date().toISOString().split('T')[0]
+      confidence: product.confidence
     };
-    setTreasures([newTreasure, ...treasures]);
+
+    addTreasure(newTreasure);
   };
 
   const handleSignOut = async () => {
@@ -92,7 +61,7 @@ const Index = () => {
     spotted: treasures.length,
     hunting: treasures.filter(t => t.status === 'hunting').length,
     found: treasures.filter(t => t.status === 'found').length,
-    claimed: 0,
+    claimed: treasures.filter(t => t.status === 'claimed').length,
     totalSaved: treasures.filter(t => t.foundPrice).reduce((acc, t) => acc + (t.price - (t.foundPrice || 0)), 0)
   };
 
@@ -217,15 +186,26 @@ const Index = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {treasures.length === 0 ? <div className="text-center py-8 text-slate-500">
+                {treasuresLoading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-800 mx-auto mb-4"></div>
+                    <p className="text-slate-600">Loading your treasures...</p>
+                  </div>
+                ) : treasures.length === 0 ? (
+                  <div className="text-center py-8 text-slate-500">
                     <Gem className="w-12 h-12 mx-auto mb-4 opacity-30" />
                     <p className="text-sm">No treasures found yet</p>
                     <p className="text-xs mt-1">
                       {user ? "Use the extension simulator to find your first treasure!" : "Sign in to start collecting treasures"}
                     </p>
-                  </div> : <div className="space-y-4">
-                    {treasures.map(treasure => <TreasureCard key={treasure.id} treasure={treasure} />)}
-                  </div>}
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {treasures.map(treasure => (
+                      <TreasureCard key={treasure.id} treasure={treasure} />
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

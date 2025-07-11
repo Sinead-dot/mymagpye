@@ -14,7 +14,89 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      treasures: {
+        Row: {
+          brand: string | null
+          confidence: number | null
+          created_at: string
+          date_spotted: string
+          found_price: number | null
+          id: string
+          image: string | null
+          last_hunted: string
+          platform: string | null
+          price: number | null
+          status: string
+          title: string
+          updated_at: string
+          url: string
+          user_id: string
+        }
+        Insert: {
+          brand?: string | null
+          confidence?: number | null
+          created_at?: string
+          date_spotted?: string
+          found_price?: number | null
+          id?: string
+          image?: string | null
+          last_hunted?: string
+          platform?: string | null
+          price?: number | null
+          status?: string
+          title: string
+          updated_at?: string
+          url: string
+          user_id: string
+        }
+        Update: {
+          brand?: string | null
+          confidence?: number | null
+          created_at?: string
+          date_spotted?: string
+          found_price?: number | null
+          id?: string
+          image?: string | null
+          last_hunted?: string
+          platform?: string | null
+          price?: number | null
+          status?: string
+          title?: string
+          updated_at?: string
+          url?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "treasures_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
