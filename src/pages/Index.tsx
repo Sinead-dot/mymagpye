@@ -9,6 +9,7 @@ import SpotButton from "@/components/SpotButton";
 import HuntingStats from "@/components/HuntingStats";
 import NotificationDemo from "@/components/NotificationDemo";
 import { Treasure } from "@/types/treasure";
+
 const Index = () => {
   const [treasures, setTreasures] = useState<Treasure[]>([{
     id: '1',
@@ -47,6 +48,7 @@ const Index = () => {
   }]);
   const [showDemo, setShowDemo] = useState(false);
   const [notifications, setNotifications] = useState([]);
+
   const handleSpotTreasure = () => {
     const newTreasure: Treasure = {
       id: Date.now().toString(),
@@ -82,6 +84,7 @@ const Index = () => {
       }]);
     }, 3000);
   };
+
   const stats = {
     spotted: treasures.length,
     hunting: treasures.filter(t => t.status === 'hunting').length,
@@ -89,14 +92,15 @@ const Index = () => {
     claimed: treasures.filter(t => t.status === 'claimed').length,
     totalSaved: treasures.reduce((sum, t) => t.status === 'found' || t.status === 'claimed' ? sum + (t.price - (t.foundPrice || 0)) : sum, 0)
   };
+
   return <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
       <header className="bg-white border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center overflow-hidden">
-                <img src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" alt="MyMagPye Logo" className="w-16 h-16 object-contain" />
+              <div className="w-24 h-24 rounded-full flex items-center justify-center overflow-hidden">
+                <img src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" alt="MyMagPye Logo" className="w-24 h-24 object-contain" />
               </div>
               <div>
                 
@@ -225,7 +229,7 @@ const Index = () => {
       <footer className="bg-slate-800 text-white py-8 mt-16">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <img src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" alt="MyMagPye Logo" className="w-12 h-12 object-contain filter brightness-0 invert" />
+            <img src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" alt="MyMagPye Logo" className="w-20 h-20 object-contain filter brightness-0 invert" />
             <h3 className="text-xl font-bold">MyMagPye</h3>
           </div>
           <p className="text-slate-300 mb-4">Spot. Save. Snag.</p>
@@ -236,4 +240,5 @@ const Index = () => {
       </footer>
     </div>;
 };
+
 export default Index;
