@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,51 +9,44 @@ import SpotButton from "@/components/SpotButton";
 import HuntingStats from "@/components/HuntingStats";
 import NotificationDemo from "@/components/NotificationDemo";
 import { Treasure } from "@/types/treasure";
-
 const Index = () => {
-  const [treasures, setTreasures] = useState<Treasure[]>([
-    {
-      id: '1',
-      title: 'Linen Midi Dress',
-      brand: 'Sezane',
-      price: 150,
-      image: '/placeholder.svg',
-      status: 'found' as const,
-      platform: 'Vinted',
-      foundPrice: 89,
-      dateSpotted: '2025-01-08',
-      lastHunted: '2025-01-11',
-      confidence: 92
-    },
-    {
-      id: '2', 
-      title: 'Wool Blend Coat',
-      brand: 'Zara',
-      price: 89,
-      image: '/placeholder.svg',
-      status: 'hunting' as const,
-      dateSpotted: '2025-01-10',
-      lastHunted: '2025-01-11',
-      confidence: null
-    },
-    {
-      id: '3',
-      title: 'Silk Scarf',
-      brand: 'H&M',
-      price: 29,
-      image: '/placeholder.svg', 
-      status: 'claimed' as const,
-      platform: 'eBay',
-      foundPrice: 18,
-      dateSpotted: '2025-01-06',
-      lastHunted: '2025-01-10',
-      confidence: 88
-    }
-  ]);
-
+  const [treasures, setTreasures] = useState<Treasure[]>([{
+    id: '1',
+    title: 'Linen Midi Dress',
+    brand: 'Sezane',
+    price: 150,
+    image: '/placeholder.svg',
+    status: 'found' as const,
+    platform: 'Vinted',
+    foundPrice: 89,
+    dateSpotted: '2025-01-08',
+    lastHunted: '2025-01-11',
+    confidence: 92
+  }, {
+    id: '2',
+    title: 'Wool Blend Coat',
+    brand: 'Zara',
+    price: 89,
+    image: '/placeholder.svg',
+    status: 'hunting' as const,
+    dateSpotted: '2025-01-10',
+    lastHunted: '2025-01-11',
+    confidence: null
+  }, {
+    id: '3',
+    title: 'Silk Scarf',
+    brand: 'H&M',
+    price: 29,
+    image: '/placeholder.svg',
+    status: 'claimed' as const,
+    platform: 'eBay',
+    foundPrice: 18,
+    dateSpotted: '2025-01-06',
+    lastHunted: '2025-01-10',
+    confidence: 88
+  }]);
   const [showDemo, setShowDemo] = useState(false);
   const [notifications, setNotifications] = useState([]);
-
   const handleSpotTreasure = () => {
     const newTreasure: Treasure = {
       id: Date.now().toString(),
@@ -67,54 +59,48 @@ const Index = () => {
       lastHunted: new Date().toISOString().split('T')[0],
       confidence: null
     };
-    
     setTreasures(prev => [newTreasure, ...prev]);
-    
+
     // Simulate finding treasure after 3 seconds
     setTimeout(() => {
-      setTreasures(prev => prev.map(t => 
-        t.id === newTreasure.id 
-          ? { ...t, status: 'found' as const, platform: 'Vinted', foundPrice: 45, confidence: 91 }
-          : t
-      ));
-      
+      setTreasures(prev => prev.map(t => t.id === newTreasure.id ? {
+        ...t,
+        status: 'found' as const,
+        platform: 'Vinted',
+        foundPrice: 45,
+        confidence: 91
+      } : t));
       setNotifications(prev => [...prev, {
         id: Date.now(),
         type: 'treasure_found',
-        treasure: { ...newTreasure, status: 'found' as const, platform: 'Vinted', foundPrice: 45 }
+        treasure: {
+          ...newTreasure,
+          status: 'found' as const,
+          platform: 'Vinted',
+          foundPrice: 45
+        }
       }]);
     }, 3000);
   };
-
   const stats = {
     spotted: treasures.length,
     hunting: treasures.filter(t => t.status === 'hunting').length,
     found: treasures.filter(t => t.status === 'found').length,
     claimed: treasures.filter(t => t.status === 'claimed').length,
-    totalSaved: treasures.reduce((sum, t) => 
-      t.status === 'found' || t.status === 'claimed' 
-        ? sum + (t.price - (t.foundPrice || 0)) 
-        : sum, 0
-    )
+    totalSaved: treasures.reduce((sum, t) => t.status === 'found' || t.status === 'claimed' ? sum + (t.price - (t.foundPrice || 0)) : sum, 0)
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+  return <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
       <header className="bg-white border-b border-slate-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-16 h-16 rounded-full flex items-center justify-center overflow-hidden">
-                <img 
-                  src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" 
-                  alt="MyMagPye Logo" 
-                  className="w-16 h-16 object-contain"
-                />
+                <img src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" alt="MyMagPye Logo" className="w-16 h-16 object-contain" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-800">MyMagPye</h1>
-                <p className="text-slate-600 text-sm">Your Smart Treasure Collector</p>
+                
+                
               </div>
             </div>
             <Badge variant="secondary" className="bg-green-100 text-green-800">
@@ -171,40 +157,30 @@ const Index = () => {
                   
                   <TabsContent value="all" className="mt-6">
                     <div className="grid md:grid-cols-2 gap-4">
-                      {treasures.map(treasure => (
-                        <TreasureCard key={treasure.id} treasure={treasure} />
-                      ))}
-                      {treasures.length === 0 && (
-                        <div className="col-span-2 text-center py-12 text-slate-500">
+                      {treasures.map(treasure => <TreasureCard key={treasure.id} treasure={treasure} />)}
+                      {treasures.length === 0 && <div className="col-span-2 text-center py-12 text-slate-500">
                           <span className="text-4xl block mb-4">🪶</span>
                           <p>No treasures spotted yet!</p>
                           <p className="text-sm">Visit a retail site and click the MyMagPye button to start collecting.</p>
-                        </div>
-                      )}
+                        </div>}
                     </div>
                   </TabsContent>
                   
                   <TabsContent value="hunting" className="mt-6">
                     <div className="grid md:grid-cols-2 gap-4">
-                      {treasures.filter(t => t.status === 'hunting').map(treasure => (
-                        <TreasureCard key={treasure.id} treasure={treasure} />
-                      ))}
+                      {treasures.filter(t => t.status === 'hunting').map(treasure => <TreasureCard key={treasure.id} treasure={treasure} />)}
                     </div>
                   </TabsContent>
                   
                   <TabsContent value="found" className="mt-6">
                     <div className="grid md:grid-cols-2 gap-4">
-                      {treasures.filter(t => t.status === 'found').map(treasure => (
-                        <TreasureCard key={treasure.id} treasure={treasure} />
-                      ))}
+                      {treasures.filter(t => t.status === 'found').map(treasure => <TreasureCard key={treasure.id} treasure={treasure} />)}
                     </div>
                   </TabsContent>
                   
                   <TabsContent value="claimed" className="mt-6">
                     <div className="grid md:grid-cols-2 gap-4">
-                      {treasures.filter(t => t.status === 'claimed').map(treasure => (
-                        <TreasureCard key={treasure.id} treasure={treasure} />
-                      ))}
+                      {treasures.filter(t => t.status === 'claimed').map(treasure => <TreasureCard key={treasure.id} treasure={treasure} />)}
                     </div>
                   </TabsContent>
                 </Tabs>
@@ -249,11 +225,7 @@ const Index = () => {
       <footer className="bg-slate-800 text-white py-8 mt-16">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <img 
-              src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" 
-              alt="MyMagPye Logo" 
-              className="w-12 h-12 object-contain filter brightness-0 invert"
-            />
+            <img src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" alt="MyMagPye Logo" className="w-12 h-12 object-contain filter brightness-0 invert" />
             <h3 className="text-xl font-bold">MyMagPye</h3>
           </div>
           <p className="text-slate-300 mb-4">Spot. Save. Snag.</p>
@@ -262,8 +234,6 @@ const Index = () => {
           </p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
