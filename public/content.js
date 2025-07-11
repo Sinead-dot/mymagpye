@@ -46,6 +46,17 @@ class MyMagPyeExtension {
     this.isProcessing = false;
   }
 
+  // Check if extension context is still valid
+  isExtensionContextValid() {
+    try {
+      return typeof chrome !== 'undefined' && 
+             chrome.runtime && 
+             chrome.runtime.id;
+    } catch (error) {
+      return false;
+    }
+  }
+
   async saveProduct() {
     if (!this.productData) {
       console.error('No product data to save');
@@ -61,42 +72,76 @@ class MyMagPyeExtension {
     }
     
     try {
-      // Try to save to web app database first
-      const savedToWebApp = await this.saveToWebApp(this.productData);
-      
-      if (savedToWebApp) {
-        this.notificationManager.showNotification('Treasure saved to MyMagPye! 🏴‍☠️', 'success');
+      // Check if extension context is still valid
+      if (!this.isExtensionContextValid()) {
+        console.warn('Extension context invalidated - falling back to web app only');
         
-        if (huntBtn) {
-          huntBtn.textContent = '✅ Saved to MyMagPye';
+        // Try to save to web app only
+        const savedToWebApp = await this.saveToWebApp(this.productData);
+        
+        if (savedToWebApp) {
+          this.notificationManager.showNotification('Treasure saved to MyMagPye! 🏴‍☠️', 'success');
+          if (huntBtn) {
+            huntBtn.textContent = '✅ Saved to MyMagPye';
+          }
+        } else {
+          throw new Error('Failed to save to web app and extension context is invalid');
         }
       } else {
-        // Fallback to local storage
-        await this.saveToLocalStorage(this.productData);
-        this.notificationManager.showNotification('Treasure saved locally! Sign in to sync across devices. 🏴‍☠️', 'info');
+        // Try to save to web app database first
+        const savedToWebApp = await this.saveToWebApp(this.productData);
         
-        if (huntBtn) {
-          huntBtn.textContent = '✅ Saved Locally';
+        if (savedToWebApp) {
+          this.notificationManager.showNotification('Treasure saved to MyMagPye! 🏴‍☠️', 'success');
+          
+          if (huntBtn) {
+            huntBtn.textContent = '✅ Saved to MyMagPye';
+          }
+        } else {
+          // Fallback to local storage
+          await this.saveToLocalStorage(this.productData);
+          this.notificationManager.showNotification('Treasure saved locally! Sign in to sync across devices. 🏴‍☠️', 'info');
+          
+          if (huntBtn) {
+            huntBtn.textContent = '✅ Saved Locally';
+          }
         }
       }
       
-      // Refresh sidebar data
-      this.sidebarManager.loadSidebarData();
+      // Refresh sidebar data if possible
+      if (this.isExtensionContextValid()) {
+        this.sidebarManager.loadSidebarData();
+      }
       
       console.log('✅ Product saved:', this.productData.title);
       
     } catch (error) {
       console.error('Error saving product:', error);
-      this.notificationManager.showNotification('Error saving treasure: ' + error.message, 'error');
+      
+      // More user-friendly error messages
+      let errorMessage = 'Error saving treasure';
+      if (error.message.includes('Extension context invalidated')) {
+        errorMessage = 'Extension needs to be refreshed. Please reload this page after refreshing the extension.';
+      } else if (error.message.includes('Could not establish connection')) {
+        errorMessage = 'Extension connection lost. Please refresh this page.';
+      } else {
+        errorMessage += ': ' + error.message;
+      }
+      
+      this.notificationManager.showNotification(errorMessage, 'error');
       if (huntBtn) {
-        huntBtn.textContent = '❌ Error';
+        huntBtn.textContent = '❌ Error - Refresh Page';
       }
     } finally {
       if (huntBtn) {
         setTimeout(() => {
+          if (huntBtn.textContent.includes('Error')) {
+            // Don't reset error state automatically
+            return;
+          }
           huntBtn.disabled = false;
           huntBtn.textContent = '🔍 Hunt';
-        }, 2000);
+        }, 3000);
       }
     }
   }
@@ -121,15 +166,16 @@ class MyMagPyeExtension {
       // Post message to all frames (including the main web app)
       window.postMessage(messageData, '*');
       
-      // Also try to communicate with any MyMagPye web app tabs
-      if (typeof chrome !== 'undefined' && chrome.runtime) {
+      // Also try to communicate with any MyMagPye web app tabs if extension context is valid
+      if (this.isExtensionContextValid()) {
         try {
-          await chrome.runtime.sendMessage({
+          const response = await chrome.runtime.sendMessage({
             action: 'saveToWebApp',
             treasure: messageData.treasure
           });
+          console.log('Chrome extension response:', response);
         } catch (chromeError) {
-          console.log('Chrome extension messaging failed:', chromeError);
+          console.log('Chrome extension messaging failed (expected if context invalidated):', chromeError);
           // Don't throw here as postMessage might still work
         }
       }
@@ -143,9 +189,9 @@ class MyMagPyeExtension {
 
   async saveToLocalStorage(productData) {
     try {
-      // Check if chrome.storage is available
-      if (typeof chrome === 'undefined' || !chrome.storage) {
-        throw new Error('Chrome storage not available');
+      // Check if chrome.storage is available and extension context is valid
+      if (!this.isExtensionContextValid()) {
+        throw new Error('Extension context invalidated - cannot save locally');
       }
 
       const result = await chrome.storage.local.get(['savedItems']);
@@ -160,16 +206,14 @@ class MyMagPyeExtension {
       await chrome.storage.local.set({ savedItems });
       
       // Try to start hunting, but don't fail if it doesn't work
-      if (chrome.runtime) {
-        try {
-          await chrome.runtime.sendMessage({
-            action: 'startHunting',
-            productData: productData
-          });
-        } catch (huntError) {
-          console.log('Failed to start hunting:', huntError);
-          // Don't throw here - the item was still saved locally
-        }
+      try {
+        await chrome.runtime.sendMessage({
+          action: 'startHunting',
+          productData: productData
+        });
+      } catch (huntError) {
+        console.log('Failed to start hunting (expected if context invalidated):', huntError);
+        // Don't throw here - the item was still saved locally
       }
       
       return true;
@@ -181,8 +225,8 @@ class MyMagPyeExtension {
 
   async removeItem(index) {
     try {
-      if (typeof chrome === 'undefined' || !chrome.storage) {
-        throw new Error('Chrome storage not available');
+      if (!this.isExtensionContextValid()) {
+        throw new Error('Extension context invalidated - cannot remove item');
       }
 
       const result = await chrome.storage.local.get(['savedItems']);
@@ -195,7 +239,13 @@ class MyMagPyeExtension {
       this.notificationManager.showNotification('Item removed successfully', 'success');
     } catch (error) {
       console.error('Error removing item:', error);
-      this.notificationManager.showNotification('Error removing item: ' + error.message, 'error');
+      let errorMessage = 'Error removing item';
+      if (error.message.includes('Extension context invalidated')) {
+        errorMessage = 'Please refresh this page after refreshing the extension.';
+      } else {
+        errorMessage += ': ' + error.message;
+      }
+      this.notificationManager.showNotification(errorMessage, 'error');
     }
   }
 }
