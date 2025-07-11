@@ -1,0 +1,55 @@
+
+{
+  "manifest_version": 3,
+  "name": "MyMagPye Treasure Hunter",
+  "version": "1.0.0",
+  "description": "Find better deals on items you're viewing",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://api.ebay.com/*",
+    "https://*.ebay.com/*",
+    "https://*.amazon.com/*",
+    "https://*.amazon.co.uk/*",
+    "https://*.zara.com/*",
+    "https://*.hm.com/*",
+    "https://*.asos.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.amazon.com/*",
+        "https://*.amazon.co.uk/*",
+        "https://*.zara.com/*",
+        "https://*.hm.com/*",
+        "https://*.asos.com/*",
+        "https://*.next.co.uk/*",
+        "https://*.johnlewis.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "MyMagPye Treasure Hunter",
+    "default_icon": {
+      "16": "favicon.ico",
+      "32": "favicon.ico",
+      "48": "favicon.ico",
+      "128": "favicon.ico"
+    }
+  },
+  "icons": {
+    "16": "favicon.ico",
+    "32": "favicon.ico",
+    "48": "favicon.ico",
+    "128": "favicon.ico"
+  }
+}
