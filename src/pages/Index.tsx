@@ -11,52 +11,51 @@ import { useAuth } from '@/contexts/AuthContext';
 import AuthForm from '@/components/AuthForm';
 import UserProfile from '@/components/UserProfile';
 import { useToast } from '@/hooks/use-toast';
-
 const Index = () => {
-  const { user, loading, signOut } = useAuth();
-  const { toast } = useToast();
-  const [treasures, setTreasures] = useState([
-    {
-      id: "1",
-      title: "Vintage Leather Jacket",
-      brand: "Unknown Brand",
-      platform: "Etsy",
-      url: "https://www.etsy.com/listing/123456789",
-      dateSpotted: "2024-03-15",
-      lastHunted: "2024-03-15",
-      price: 75.00,
-      image: "/placeholder.svg",
-      status: 'hunting' as const,
-    },
-    {
-      id: "2",
-      title: "Retro Floral Dress",
-      brand: "Vintage Co",
-      platform: "eBay",
-      url: "https://www.ebay.com/itm/987654321",
-      dateSpotted: "2024-03-10",
-      lastHunted: "2024-03-10",
-      price: 45.50,
-      image: "/placeholder.svg",
-      status: 'hunting' as const,
-    },
-    {
-      id: "3",
-      title: "Antique Silver Locket",
-      brand: "Antique Shop",
-      platform: "ThredUp",
-      url: "https://www.thredup.com/product/abcdefgh",
-      dateSpotted: "2024-03-05",
-      lastHunted: "2024-03-05",
-      price: 30.00,
-      image: "/placeholder.svg",
-      status: 'found' as const,
-      foundPrice: 25.00,
-    },
-  ]);
-
+  const {
+    user,
+    loading,
+    signOut
+  } = useAuth();
+  const {
+    toast
+  } = useToast();
+  const [treasures, setTreasures] = useState([{
+    id: "1",
+    title: "Vintage Leather Jacket",
+    brand: "Unknown Brand",
+    platform: "Etsy",
+    url: "https://www.etsy.com/listing/123456789",
+    dateSpotted: "2024-03-15",
+    lastHunted: "2024-03-15",
+    price: 75.00,
+    image: "/placeholder.svg",
+    status: 'hunting' as const
+  }, {
+    id: "2",
+    title: "Retro Floral Dress",
+    brand: "Vintage Co",
+    platform: "eBay",
+    url: "https://www.ebay.com/itm/987654321",
+    dateSpotted: "2024-03-10",
+    lastHunted: "2024-03-10",
+    price: 45.50,
+    image: "/placeholder.svg",
+    status: 'hunting' as const
+  }, {
+    id: "3",
+    title: "Antique Silver Locket",
+    brand: "Antique Shop",
+    platform: "ThredUp",
+    url: "https://www.thredup.com/product/abcdefgh",
+    dateSpotted: "2024-03-05",
+    lastHunted: "2024-03-05",
+    price: 30.00,
+    image: "/placeholder.svg",
+    status: 'found' as const,
+    foundPrice: 25.00
+  }]);
   const [notifications, setNotifications] = useState([]);
-
   const handleProductSpotted = (product: any) => {
     const newTreasure = {
       ...product,
@@ -64,23 +63,22 @@ const Index = () => {
       brand: product.brand || "Unknown Brand",
       image: product.image || "/placeholder.svg",
       status: 'hunting' as const,
-      lastHunted: new Date().toISOString().split('T')[0],
+      lastHunted: new Date().toISOString().split('T')[0]
     };
     setTreasures([newTreasure, ...treasures]);
   };
-
   const handleSignOut = async () => {
     try {
       await signOut();
       toast({
         title: "Signed Out",
-        description: "You've been successfully signed out",
+        description: "You've been successfully signed out"
       });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to sign out",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
@@ -90,33 +88,23 @@ const Index = () => {
     spotted: treasures.length,
     hunting: treasures.filter(t => t.status === 'hunting').length,
     found: treasures.filter(t => t.status === 'found').length,
-    claimed: 0, // Set to 0 since 'claimed' is not a valid status
-    totalSaved: treasures
-      .filter(t => t.foundPrice)
-      .reduce((acc, t) => acc + (t.price - (t.foundPrice || 0)), 0),
+    claimed: 0,
+    // Set to 0 since 'claimed' is not a valid status
+    totalSaved: treasures.filter(t => t.foundPrice).reduce((acc, t) => acc + (t.price - (t.foundPrice || 0)), 0)
   };
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+    return <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-800 mx-auto mb-4"></div>
           <p className="text-slate-600">Loading...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-white">
+  return <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <header className="py-6 px-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <img 
-              src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" 
-              alt="MyMagPye Logo" 
-              className="w-[250px] h-[250px] object-contain"
-            />
+            <img src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" alt="MyMagPye Logo" className="w-[250px] h-[250px] object-contain" />
             <div className="flex space-x-4">
               <Button variant="outline" size="sm">
                 How it Works
@@ -126,31 +114,23 @@ const Index = () => {
           </div>
           
           <div className="flex items-center space-x-4">
-            {user ? (
-              <div className="flex items-center space-x-3">
+            {user ? <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
                   <User className="w-4 h-4 text-slate-600" />
                   <span className="text-sm text-slate-700">{user.email}</span>
                 </div>
-                <Button
-                  onClick={handleSignOut}
-                  variant="outline"
-                  size="sm"
-                >
+                <Button onClick={handleSignOut} variant="outline" size="sm">
                   <LogOut className="w-4 h-4 mr-1" />
                   Sign Out
                 </Button>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-2">
+              </div> : <div className="flex items-center space-x-2">
                 <Button variant="outline" size="sm">
                   Sign In
                 </Button>
                 <Button size="sm">
                   Sign Up
                 </Button>
-              </div>
-            )}
+              </div>}
           </div>
         </div>
       </header>
@@ -158,7 +138,7 @@ const Index = () => {
       {/* Spot, Save, Snag Section */}
       <section className="container mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-slate-800 mb-4">Spot, Save, Snag</h2>
+          <h2 className="text-3xl font-bold text-slate-800 mb-4">Your Secondhand Shopping Companion</h2>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             Transform your shopping with MyMagPye's intelligent treasure hunting system
           </p>
@@ -221,12 +201,10 @@ const Index = () => {
           <div className="space-y-6">
             {user ? <UserProfile /> : <AuthForm />}
             
-            {user && (
-              <>
+            {user && <>
                 <HuntingStats stats={stats} />
                 <NotificationDemo notifications={notifications} />
-              </>
-            )}
+              </>}
           </div>
 
           {/* Middle Column - Extension Simulator */}
@@ -247,28 +225,20 @@ const Index = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {treasures.length === 0 ? (
-                  <div className="text-center py-8 text-slate-500">
+                {treasures.length === 0 ? <div className="text-center py-8 text-slate-500">
                     <Gem className="w-12 h-12 mx-auto mb-4 opacity-30" />
                     <p className="text-sm">No treasures found yet</p>
                     <p className="text-xs mt-1">
                       {user ? "Use the extension simulator to find your first treasure!" : "Sign in to start collecting treasures"}
                     </p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {treasures.map((treasure) => (
-                      <TreasureCard key={treasure.id} treasure={treasure} />
-                    ))}
-                  </div>
-                )}
+                  </div> : <div className="space-y-4">
+                    {treasures.map(treasure => <TreasureCard key={treasure.id} treasure={treasure} />)}
+                  </div>}
               </CardContent>
             </Card>
           </div>
         </div>
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
