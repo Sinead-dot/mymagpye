@@ -1,4 +1,3 @@
-
 // Popup script for MyMagPye extension - MVP Version
 class PopupManager {
   constructor() {
@@ -45,7 +44,9 @@ class PopupManager {
         `;
         
         const content = document.getElementById('content');
-        content.insertBefore(statsDiv, content.firstChild);
+        if (content) {
+          content.insertBefore(statsDiv, content.firstChild);
+        }
       }
       
     } catch (error) {
@@ -57,13 +58,24 @@ class PopupManager {
     const content = document.getElementById('content');
     const emptyState = document.getElementById('emptyState');
     
+    if (!content || !emptyState) {
+      console.error('Required DOM elements not found');
+      return;
+    }
+    
     if (items.length === 0) {
       emptyState.style.display = 'block';
+      // Clear content but keep empty state
+      const existingItems = content.querySelectorAll('.item');
+      existingItems.forEach(item => item.remove());
       return;
     }
     
     emptyState.style.display = 'none';
-    content.innerHTML = '';
+    
+    // Clear existing items
+    const existingItems = content.querySelectorAll('.item');
+    existingItems.forEach(item => item.remove());
     
     items.forEach((item, index) => {
       const itemElement = this.createItemElement(item, index);
@@ -117,27 +129,52 @@ class PopupManager {
   }
 
   setupEventListeners() {
-    document.getElementById('openApp').addEventListener('click', () => {
-      chrome.tabs.create({ url: chrome.runtime.getURL('index.html') });
-    });
+    const openAppButton = document.getElementById('openApp');
+    if (openAppButton) {
+      openAppButton.addEventListener('click', () => {
+        chrome.tabs.create({ url: chrome.runtime.getURL('index.html') });
+      });
+    }
 
     // Add clear all button
-    const clearButton = document.createElement('button');
-    clearButton.textContent = 'Clear All Items';
-    clearButton.style.cssText = `
-      background: #ef4444; color: white; border: none; padding: 8px 16px; 
-      border-radius: 6px; font-size: 12px; cursor: pointer; margin-top: 10px; width: 100%;
-    `;
-    clearButton.onclick = () => this.clearAllItems();
-    
-    document.querySelector('.footer').appendChild(clearButton);
+    const footer = document.querySelector('.footer');
+    if (footer) {
+      const clearButton = document.createElement('button');
+      clearButton.textContent = 'Clear All Items';
+      clearButton.style.cssText = `
+        background: #ef4444; color: white; border: none; padding: 8px 16px; 
+        border-radius: 6px; font-size: 12px; cursor: pointer; margin-top: 10px; width: 100%;
+      `;
+      clearButton.onclick = () => this.clearAllItems();
+      
+      footer.appendChild(clearButton);
+    }
   }
 
   async clearAllItems() {
     if (confirm('Clear all saved items?')) {
       try {
         await chrome.storage.local.set({ savedItems: [], huntResults: {} });
-        this.displayItems([]);
+        
+        // Safely refresh the display
+        const emptyState = document.getElementById('emptyState');
+        const content = document.getElementById('content');
+        
+        if (emptyState && content) {
+          // Remove all items from content
+          const existingItems = content.querySelectorAll('.item');
+          existingItems.forEach(item => item.remove());
+          
+          // Show empty state
+          emptyState.style.display = 'block';
+          
+          // Remove hunt stats if they exist
+          const huntStats = content.querySelector('.hunt-stats');
+          if (huntStats) {
+            huntStats.remove();
+          }
+        }
+        
         console.log('All items cleared');
       } catch (error) {
         console.error('Error clearing items:', error);
