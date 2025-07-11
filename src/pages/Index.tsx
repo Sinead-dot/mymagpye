@@ -94,15 +94,18 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <header className="py-6 px-4">
         <div className="container mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <Gem className="w-6 h-6 mr-2 text-purple-600" />
-            <h1 className="text-xl font-bold text-slate-800">MyMagPye</h1>
-          </div>
-          <div className="space-x-4">
+          <div className="flex items-center space-x-4">
             <Button variant="outline" size="sm">
               How it Works
             </Button>
             <Button size="sm">Get Extension</Button>
+          </div>
+          <div>
+            <img 
+              src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" 
+              alt="MyMagPye Logo" 
+              className="h-8"
+            />
           </div>
         </div>
       </header>
