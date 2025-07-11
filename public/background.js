@@ -1,5 +1,5 @@
 
-// Background script for MyMagPye extension - MVP Version
+// Background script for MyMagPye extension - Web App Integration
 class BackgroundService {
   constructor() {
     this.init();
@@ -8,7 +8,10 @@ class BackgroundService {
   init() {
     // Listen for messages from content script
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      if (request.action === 'startHunting') {
+      if (request.action === 'saveToWebApp') {
+        this.forwardToWebApp(request.treasure);
+        sendResponse({ success: true });
+      } else if (request.action === 'startHunting') {
         this.startHunting(request.productData);
         sendResponse({ success: true });
       }
@@ -26,6 +29,29 @@ class BackgroundService {
     chrome.alarms.create('checkDeals', { periodInMinutes: 120 });
     
     console.log('MyMagPye Background Service initialized');
+  }
+
+  async forwardToWebApp(treasure) {
+    try {
+      // Query all MyMagPye web app tabs
+      const tabs = await chrome.tabs.query({
+        url: ['https://mymagpye.lovable.app/*', 'https://*.lovableproject.com/*']
+      });
+
+      // Send message to all MyMagPye tabs
+      for (const tab of tabs) {
+        chrome.tabs.sendMessage(tab.id, {
+          type: 'MYMAGPYE_SAVE_TREASURE',
+          treasure: treasure
+        }).catch(err => {
+          console.log('Could not send to tab:', tab.id, err);
+        });
+      }
+
+      console.log('✅ Forwarded treasure to web app tabs:', tabs.length);
+    } catch (error) {
+      console.error('Error forwarding to web app:', error);
+    }
   }
 
   async startHunting(productData) {
@@ -140,7 +166,7 @@ class BackgroundService {
 // Handle notification clicks
 chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) => {
   if (buttonIndex === 0) { // "View Deal" button
-    chrome.tabs.create({ url: 'popup.html' });
+    chrome.tabs.create({ url: 'https://mymagpye.lovable.app/' });
   }
   chrome.notifications.clear(notificationId);
 });

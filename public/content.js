@@ -1,5 +1,5 @@
 
-// MyMagPye Content Script - MindStudio Style Integration
+// MyMagPye Content Script - Web App Integration
 class MyMagPyeExtension {
   constructor() {
     this.productData = null;
@@ -14,7 +14,7 @@ class MyMagPyeExtension {
   }
 
   init() {
-    console.log('🔍 MyMagPye extension loading (MindStudio style)...');
+    console.log('🔍 MyMagPye extension loading (Web App Integration)...');
     
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => this.setupExtension());
@@ -31,7 +31,7 @@ class MyMagPyeExtension {
     
     console.log('🔍 Setting up MyMagPye on:', window.location.hostname);
     
-    // Create MindStudio-style sidebar
+    // Create sidebar
     this.sidebarManager.createSidebar();
     
     // Extract product data
@@ -60,46 +60,33 @@ class MyMagPyeExtension {
     }
     
     try {
-      const result = await chrome.storage.local.get(['savedItems']);
-      const savedItems = result.savedItems || [];
+      // Try to save to web app database first
+      const savedToWebApp = await this.saveToWebApp(this.productData);
       
-      const exists = savedItems.some(item => item.url === this.productData.url);
-      if (exists) {
-        this.notificationManager.showNotification('Already hunting for this item!', 'info');
+      if (savedToWebApp) {
+        this.notificationManager.showNotification('Treasure saved to MyMagPye! 🏴‍☠️', 'success');
+        
         if (huntBtn) {
-          huntBtn.textContent = '✅ Already Saved';
+          huntBtn.textContent = '✅ Saved to MyMagPye';
         }
-        return;
-      }
-      
-      savedItems.push(this.productData);
-      await chrome.storage.local.set({ savedItems });
-      
-      chrome.runtime.sendMessage({
-        action: 'startHunting',
-        productData: this.productData
-      }, (response) => {
-        if (chrome.runtime.lastError) {
-          console.error('Message error:', chrome.runtime.lastError);
-        } else {
-          console.log('Hunt started successfully');
+      } else {
+        // Fallback to local storage
+        await this.saveToLocalStorage(this.productData);
+        this.notificationManager.showNotification('Treasure saved locally! Sign in to sync across devices. 🏴‍☠️', 'info');
+        
+        if (huntBtn) {
+          huntBtn.textContent = '✅ Saved Locally';
         }
-      });
-      
-      this.notificationManager.showNotification('Started hunting for better deals! 🏴‍☠️', 'success');
-      
-      if (huntBtn) {
-        huntBtn.textContent = '✅ Hunt Started';
       }
       
       // Refresh sidebar data
       this.sidebarManager.loadSidebarData();
       
-      console.log('✅ Product saved and hunt started:', this.productData.title);
+      console.log('✅ Product saved:', this.productData.title);
       
     } catch (error) {
       console.error('Error saving product:', error);
-      this.notificationManager.showNotification('Error starting hunt', 'error');
+      this.notificationManager.showNotification('Error saving treasure', 'error');
       if (huntBtn) {
         huntBtn.textContent = '❌ Error';
       }
@@ -111,6 +98,59 @@ class MyMagPyeExtension {
         }, 2000);
       }
     }
+  }
+
+  async saveToWebApp(productData) {
+    try {
+      // Send message to web app via postMessage
+      const messageData = {
+        type: 'MYMAGPYE_SAVE_TREASURE',
+        treasure: {
+          title: productData.title,
+          brand: productData.brand || 'Unknown Brand',
+          price: productData.price || 0,
+          image: productData.image || '/placeholder.svg',
+          url: productData.url,
+          platform: productData.platform,
+          status: 'hunting',
+          confidence: productData.confidence
+        }
+      };
+
+      // Post message to all frames (including the main web app)
+      window.postMessage(messageData, '*');
+      
+      // Also try to communicate with any MyMagPye web app tabs
+      if (typeof chrome !== 'undefined' && chrome.runtime) {
+        chrome.runtime.sendMessage({
+          action: 'saveToWebApp',
+          treasure: messageData.treasure
+        });
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Failed to save to web app:', error);
+      return false;
+    }
+  }
+
+  async saveToLocalStorage(productData) {
+    const result = await chrome.storage.local.get(['savedItems']);
+    const savedItems = result.savedItems || [];
+    
+    const exists = savedItems.some(item => item.url === productData.url);
+    if (exists) {
+      throw new Error('Item already exists');
+    }
+    
+    savedItems.push(productData);
+    await chrome.storage.local.set({ savedItems });
+    
+    chrome.runtime.sendMessage({
+      action: 'startHunting',
+      productData: productData
+    });
   }
 
   async removeItem(index) {

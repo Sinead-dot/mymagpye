@@ -7,6 +7,7 @@ import { Gem, Eye, Target, ShoppingBag, User, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
 import TreasureCard from "@/components/TreasureCard";
 import ExtensionSimulator from "@/components/ExtensionSimulator";
+import ExtensionBridge from "@/components/ExtensionBridge";
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useTreasures } from '@/hooks/useTreasures';
@@ -75,6 +76,9 @@ const Index = () => {
   }
 
   return <div className="min-h-screen bg-white">
+      {/* Extension Bridge - handles communication with browser extension */}
+      <ExtensionBridge />
+      
       <header className="py-6 px-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -196,7 +200,7 @@ const Index = () => {
                     <Gem className="w-12 h-12 mx-auto mb-4 opacity-30" />
                     <p className="text-sm">No treasures found yet</p>
                     <p className="text-xs mt-1">
-                      {user ? "Use the extension simulator to find your first treasure!" : "Sign in to start collecting treasures"}
+                      {user ? "Use the browser extension or simulator to find your first treasure!" : "Sign in to start collecting treasures"}
                     </p>
                   </div>
                 ) : (
