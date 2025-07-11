@@ -127,7 +127,7 @@ const ExtensionSimulator: React.FC<ExtensionSimulatorProps> = ({ onProductSpotte
               className="w-full bg-gradient-to-r from-slate-800 to-slate-600 hover:from-slate-700 hover:to-slate-500"
             >
               <Eye className="w-4 h-4 mr-2" />
-              Spot with MyMagPye
+              Save to MyMagPye
               <Zap className="w-4 h-4 ml-2" />
             </Button>
           </div>
