@@ -29,28 +29,29 @@ class ButtonManager {
     this.saveButton = document.createElement('button');
     this.saveButton.innerHTML = '🔍 Hunt for Better Deals';
     this.saveButton.className = 'mymagpye-save-btn';
-    this.saveButton.addEventListener('click', onSave);
     
-    this.saveButton.style.cssText = `
-      position: fixed !important;
-      top: 50% !important;
-      right: 20px !important;
-      transform: translateY(-50%) !important;
-      z-index: 10000 !important;
-      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5) !important;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-      color: white !important;
-      border: none !important;
-      padding: 12px 24px !important;
-      border-radius: 8px !important;
-      font-weight: bold !important;
-      cursor: pointer !important;
-      margin: 0 !important;
-      font-size: 14px !important;
-      transition: all 0.3s ease !important;
-      max-width: 200px !important;
-      white-space: nowrap !important;
-    `;
+    // Set styles using individual properties instead of cssText
+    this.saveButton.style.position = 'fixed';
+    this.saveButton.style.top = '50%';
+    this.saveButton.style.right = '20px';
+    this.saveButton.style.transform = 'translateY(-50%)';
+    this.saveButton.style.zIndex = '10000';
+    this.saveButton.style.boxShadow = '0 4px 20px rgba(102, 126, 234, 0.5)';
+    this.saveButton.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    this.saveButton.style.color = 'white';
+    this.saveButton.style.border = 'none';
+    this.saveButton.style.padding = '12px 24px';
+    this.saveButton.style.borderRadius = '8px';
+    this.saveButton.style.fontWeight = 'bold';
+    this.saveButton.style.cursor = 'pointer';
+    this.saveButton.style.margin = '0';
+    this.saveButton.style.fontSize = '14px';
+    this.saveButton.style.transition = 'all 0.3s ease';
+    this.saveButton.style.maxWidth = '200px';
+    this.saveButton.style.whiteSpace = 'nowrap';
+    
+    // Add event listener properly
+    this.saveButton.addEventListener('click', onSave);
     
     this.addHoverEffects();
     document.body.appendChild(this.saveButton);
