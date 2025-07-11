@@ -11,6 +11,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import AuthForm from '@/components/AuthForm';
 import UserProfile from '@/components/UserProfile';
 import { useToast } from '@/hooks/use-toast';
+
 const Index = () => {
   const {
     user,
@@ -92,19 +93,21 @@ const Index = () => {
     // Set to 0 since 'claimed' is not a valid status
     totalSaved: treasures.filter(t => t.foundPrice).reduce((acc, t) => acc + (t.price - (t.foundPrice || 0)), 0)
   };
+
   if (loading) {
-    return <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+    return <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-800 mx-auto mb-4"></div>
           <p className="text-slate-600">Loading...</p>
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+
+  return <div className="min-h-screen bg-white">
       <header className="py-6 px-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <img src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" alt="MyMagPye Logo" className="w-[250px] h-[250px] object-contain" />
+            <img src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" alt="MyMagPye Logo" className="w-[225px] h-[225px] object-contain" />
             <div className="flex space-x-4">
               <Button variant="outline" size="sm">
                 How it Works
@@ -241,4 +244,5 @@ const Index = () => {
       </main>
     </div>;
 };
+
 export default Index;
