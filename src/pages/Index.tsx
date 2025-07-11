@@ -10,7 +10,6 @@ import HuntingStats from "@/components/HuntingStats";
 import NotificationDemo from "@/components/NotificationDemo";
 import ExtensionSimulator from "@/components/ExtensionSimulator";
 import { Treasure } from "@/types/treasure";
-
 const Index = () => {
   const [treasures, setTreasures] = useState<Treasure[]>([{
     id: '1',
@@ -50,7 +49,6 @@ const Index = () => {
   const [showDemo, setShowDemo] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [huntingTreasures, setHuntingTreasures] = useState<Set<string>>(new Set());
-
   const handleSpotTreasure = () => {
     const newTreasure: Treasure = {
       id: Date.now().toString(),
@@ -86,7 +84,6 @@ const Index = () => {
       }]);
     }, 3000);
   };
-
   const handleExtensionSpot = (productData: any) => {
     const newTreasure: Treasure = {
       id: Date.now().toString(),
@@ -99,21 +96,18 @@ const Index = () => {
       lastHunted: new Date().toISOString().split('T')[0],
       confidence: null
     };
-    
     setTreasures(prev => [newTreasure, ...prev]);
-    
+
     // Auto-start hunting
     setTimeout(() => {
       handleStartHunt(newTreasure.id);
     }, 1000);
   };
-
   const handleStartHunt = (treasureId: string) => {
     const treasure = treasures.find(t => t.id === treasureId);
     if (!treasure) return;
-    
     setHuntingTreasures(prev => new Set(prev).add(treasureId));
-    
+
     // Simulate finding treasure after random time (3-8 seconds for demo)
     const huntTime = Math.random() * 5000 + 3000;
     setTimeout(() => {
@@ -121,22 +115,21 @@ const Index = () => {
       const platform = foundPlatforms[Math.floor(Math.random() * foundPlatforms.length)];
       const discountFactor = 0.3 + Math.random() * 0.4; // 30-70% discount
       const foundPrice = Math.round(treasure.price * (1 - discountFactor));
-      
       setTreasures(prev => prev.map(t => t.id === treasureId ? {
         ...t,
         status: 'found' as const,
         platform,
         foundPrice,
-        confidence: Math.floor(Math.random() * 20) + 78, // 78-98% confidence
+        confidence: Math.floor(Math.random() * 20) + 78,
+        // 78-98% confidence
         lastHunted: new Date().toISOString().split('T')[0]
       } : t));
-      
       setHuntingTreasures(prev => {
         const next = new Set(prev);
         next.delete(treasureId);
         return next;
       });
-      
+
       // Add notification
       setNotifications(prev => [...prev, {
         id: Date.now(),
@@ -150,7 +143,6 @@ const Index = () => {
       }]);
     }, huntTime);
   };
-
   const handleStopHunt = (treasureId: string) => {
     setHuntingTreasures(prev => {
       const next = new Set(prev);
@@ -158,7 +150,6 @@ const Index = () => {
       return next;
     });
   };
-
   const stats = {
     spotted: treasures.length,
     hunting: treasures.filter(t => t.status === 'hunting').length,
@@ -166,7 +157,6 @@ const Index = () => {
     claimed: treasures.filter(t => t.status === 'claimed').length,
     totalSaved: treasures.reduce((sum, t) => t.status === 'found' || t.status === 'claimed' ? sum + (t.price - (t.foundPrice || 0)) : sum, 0)
   };
-
   return <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
       <header className="bg-white border-b border-slate-200 shadow-sm">
@@ -217,7 +207,7 @@ const Index = () => {
               <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-orange-200 transition-colors">
                 <Search className="w-10 h-10 text-orange-600" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-900 mb-4">SNAG</h3>
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">SAVE</h3>
               <p className="text-slate-600 mb-4">Automatically hunt across secondhand platforms like Vinted, eBay, and more to find your treasures secondhand</p>
               <div className="text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">
                 Smart AI matching finds the best deals
@@ -232,7 +222,7 @@ const Index = () => {
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-green-200 transition-colors">
                 <DollarSign className="w-10 h-10 text-green-600" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-900 mb-4">SAVE</h3>
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">SNAG</h3>
               <p className="text-slate-600 mb-4">Get notified when we find your treasure at amazing prices. Save money while shopping sustainably.</p>
               <div className="text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">
                 Up to 70% off retail prices
@@ -292,64 +282,30 @@ const Index = () => {
                   
                   <TabsContent value="all" className="mt-6">
                     <div className="grid md:grid-cols-2 gap-4">
-                      {treasures.map(treasure => (
-                        <TreasureCard 
-                          key={treasure.id} 
-                          treasure={treasure}
-                          onStartHunt={handleStartHunt}
-                          onStopHunt={handleStopHunt}
-                          isHunting={huntingTreasures.has(treasure.id)}
-                        />
-                      ))}
-                      {treasures.length === 0 && (
-                        <div className="col-span-2 text-center py-12 text-slate-500">
+                      {treasures.map(treasure => <TreasureCard key={treasure.id} treasure={treasure} onStartHunt={handleStartHunt} onStopHunt={handleStopHunt} isHunting={huntingTreasures.has(treasure.id)} />)}
+                      {treasures.length === 0 && <div className="col-span-2 text-center py-12 text-slate-500">
                           <span className="text-4xl block mb-4">🪶</span>
                           <p>No treasures spotted yet!</p>
                           <p className="text-sm">Use the extension simulator above or visit a retail site with MyMagPye installed.</p>
-                        </div>
-                      )}
+                        </div>}
                     </div>
                   </TabsContent>
                   
                   <TabsContent value="hunting" className="mt-6">
                     <div className="grid md:grid-cols-2 gap-4">
-                      {treasures.filter(t => t.status === 'hunting').map(treasure => (
-                        <TreasureCard 
-                          key={treasure.id} 
-                          treasure={treasure}
-                          onStartHunt={handleStartHunt}
-                          onStopHunt={handleStopHunt}
-                          isHunting={huntingTreasures.has(treasure.id)}
-                        />
-                      ))}
+                      {treasures.filter(t => t.status === 'hunting').map(treasure => <TreasureCard key={treasure.id} treasure={treasure} onStartHunt={handleStartHunt} onStopHunt={handleStopHunt} isHunting={huntingTreasures.has(treasure.id)} />)}
                     </div>
                   </TabsContent>
                   
                   <TabsContent value="found" className="mt-6">
                     <div className="grid md:grid-cols-2 gap-4">
-                      {treasures.filter(t => t.status === 'found').map(treasure => (
-                        <TreasureCard 
-                          key={treasure.id} 
-                          treasure={treasure}
-                          onStartHunt={handleStartHunt}
-                          onStopHunt={handleStopHunt}
-                          isHunting={huntingTreasures.has(treasure.id)}
-                        />
-                      ))}
+                      {treasures.filter(t => t.status === 'found').map(treasure => <TreasureCard key={treasure.id} treasure={treasure} onStartHunt={handleStartHunt} onStopHunt={handleStopHunt} isHunting={huntingTreasures.has(treasure.id)} />)}
                     </div>
                   </TabsContent>
                   
                   <TabsContent value="claimed" className="mt-6">
                     <div className="grid md:grid-cols-2 gap-4">
-                      {treasures.filter(t => t.status === 'claimed').map(treasure => (
-                        <TreasureCard 
-                          key={treasure.id} 
-                          treasure={treasure}
-                          onStartHunt={handleStartHunt}
-                          onStopHunt={handleStopHunt}
-                          isHunting={huntingTreasures.has(treasure.id)}
-                        />
-                      ))}
+                      {treasures.filter(t => t.status === 'claimed').map(treasure => <TreasureCard key={treasure.id} treasure={treasure} onStartHunt={handleStartHunt} onStopHunt={handleStopHunt} isHunting={huntingTreasures.has(treasure.id)} />)}
                     </div>
                   </TabsContent>
                 </Tabs>
@@ -405,5 +361,4 @@ const Index = () => {
       </footer>
     </div>;
 };
-
 export default Index;
