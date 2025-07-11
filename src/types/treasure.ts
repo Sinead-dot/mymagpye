@@ -5,6 +5,7 @@ export interface Treasure {
   brand: string;
   price: number;
   image: string;
+  url: string;
   status: 'hunting' | 'found' | 'claimed';
   platform?: string;
   foundPrice?: number;
