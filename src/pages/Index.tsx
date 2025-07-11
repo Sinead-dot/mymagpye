@@ -196,23 +196,13 @@ const Index = () => {
       </section>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Auth or Profile */}
-          <div className="space-y-6">
-            {user ? <UserProfile /> : <AuthForm />}
-            
-            {user && <>
-                <HuntingStats stats={stats} />
-                <NotificationDemo notifications={notifications} />
-              </>}
-          </div>
-
-          {/* Middle Column - Extension Simulator */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Extension Simulator */}
           <div className="space-y-6">
             <ExtensionSimulator onProductSpotted={handleProductSpotted} />
           </div>
 
-          {/* Right Column - Treasures */}
+          {/* Treasures */}
           <div className="space-y-6">
             <Card>
               <CardHeader>
