@@ -9,7 +9,6 @@ class MyMagPyeExtension {
     this.productExtractor = new ProductExtractor();
     this.sidebarManager = new SidebarManager();
     this.notificationManager = new NotificationManager();
-    // Remove ButtonManager as we're integrating into sidebar
     
     this.init();
   }

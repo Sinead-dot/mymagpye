@@ -1,3 +1,4 @@
+
 // Sidebar management utility - MindStudio-like side panel
 class SidebarManager {
   constructor() {
@@ -141,7 +142,7 @@ class SidebarManager {
     container.innerHTML = `
       <div class="mymagpye-current-treasure-card">
         <div class="mymagpye-treasure-header">
-          <img src="${productData.image}" alt="${productData.title}" class="mymagpye-treasure-image" onerror="this.src='/placeholder.svg'">
+          <img src="${productData.image}" alt="${productData.title}" class="mymagpye-treasure-image">
           <div class="mymagpye-treasure-badge">💎 Found</div>
         </div>
         <div class="mymagpye-treasure-info">
@@ -155,13 +156,21 @@ class SidebarManager {
       </div>
     `;
 
-    // Add hunt button listener
+    // Add hunt button listener using proper event listener
     const huntBtn = container.querySelector('#mymagpye-quick-hunt');
     if (huntBtn) {
       huntBtn.addEventListener('click', () => {
         if (window.myMagPyeExtension) {
           window.myMagPyeExtension.saveProduct();
         }
+      });
+    }
+
+    // Handle image error using proper event listener
+    const treasureImage = container.querySelector('.mymagpye-treasure-image');
+    if (treasureImage) {
+      treasureImage.addEventListener('error', function() {
+        this.src = '/placeholder.svg';
       });
     }
   }
@@ -194,7 +203,7 @@ class SidebarManager {
     
     container.innerHTML = items.slice(0, 3).map((item, index) => `
       <div class="mymagpye-sidebar-item" data-url="${item.url}">
-        <img src="${item.image}" alt="${item.title}" class="mymagpye-item-image" onerror="this.src='/placeholder.svg'">
+        <img src="${item.image}" alt="${item.title}" class="mymagpye-item-image">
         <div class="mymagpye-item-info">
           <div class="mymagpye-item-title">${item.title.length > 25 ? item.title.substring(0, 25) + '...' : item.title}</div>
           <div class="mymagpye-item-price">£${typeof item.price === 'number' ? item.price.toFixed(2) : item.price}</div>
@@ -257,6 +266,13 @@ class SidebarManager {
         if (window.myMagPyeExtension) {
           window.myMagPyeExtension.removeItem(index);
         }
+      });
+    });
+
+    // Handle image errors using proper event listeners
+    container.querySelectorAll('.mymagpye-item-image').forEach(img => {
+      img.addEventListener('error', function() {
+        this.src = '/placeholder.svg';
       });
     });
   }
