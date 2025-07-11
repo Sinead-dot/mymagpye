@@ -8,6 +8,7 @@ import TreasureCard from "@/components/TreasureCard";
 import SpotButton from "@/components/SpotButton";
 import HuntingStats from "@/components/HuntingStats";
 import NotificationDemo from "@/components/NotificationDemo";
+import ExtensionSimulator from "@/components/ExtensionSimulator";
 import { Treasure } from "@/types/treasure";
 
 const Index = () => {
@@ -48,6 +49,7 @@ const Index = () => {
   }]);
   const [showDemo, setShowDemo] = useState(false);
   const [notifications, setNotifications] = useState([]);
+  const [huntingTreasures, setHuntingTreasures] = useState<Set<string>>(new Set());
 
   const handleSpotTreasure = () => {
     const newTreasure: Treasure = {
@@ -83,6 +85,78 @@ const Index = () => {
         }
       }]);
     }, 3000);
+  };
+
+  const handleExtensionSpot = (productData: any) => {
+    const newTreasure: Treasure = {
+      id: Date.now().toString(),
+      title: productData.title,
+      brand: productData.brand,
+      price: productData.price,
+      image: productData.image,
+      status: 'hunting' as const,
+      dateSpotted: new Date().toISOString().split('T')[0],
+      lastHunted: new Date().toISOString().split('T')[0],
+      confidence: null
+    };
+    
+    setTreasures(prev => [newTreasure, ...prev]);
+    
+    // Auto-start hunting
+    setTimeout(() => {
+      handleStartHunt(newTreasure.id);
+    }, 1000);
+  };
+
+  const handleStartHunt = (treasureId: string) => {
+    const treasure = treasures.find(t => t.id === treasureId);
+    if (!treasure) return;
+    
+    setHuntingTreasures(prev => new Set(prev).add(treasureId));
+    
+    // Simulate finding treasure after random time (3-8 seconds for demo)
+    const huntTime = Math.random() * 5000 + 3000;
+    setTimeout(() => {
+      const foundPlatforms = ['Vinted', 'eBay', 'Depop', 'Vestiaire Collective'];
+      const platform = foundPlatforms[Math.floor(Math.random() * foundPlatforms.length)];
+      const discountFactor = 0.3 + Math.random() * 0.4; // 30-70% discount
+      const foundPrice = Math.round(treasure.price * (1 - discountFactor));
+      
+      setTreasures(prev => prev.map(t => t.id === treasureId ? {
+        ...t,
+        status: 'found' as const,
+        platform,
+        foundPrice,
+        confidence: Math.floor(Math.random() * 20) + 78, // 78-98% confidence
+        lastHunted: new Date().toISOString().split('T')[0]
+      } : t));
+      
+      setHuntingTreasures(prev => {
+        const next = new Set(prev);
+        next.delete(treasureId);
+        return next;
+      });
+      
+      // Add notification
+      setNotifications(prev => [...prev, {
+        id: Date.now(),
+        type: 'treasure_found',
+        treasure: {
+          ...treasure,
+          status: 'found' as const,
+          platform,
+          foundPrice
+        }
+      }]);
+    }, huntTime);
+  };
+
+  const handleStopHunt = (treasureId: string) => {
+    setHuntingTreasures(prev => {
+      const next = new Set(prev);
+      next.delete(treasureId);
+      return next;
+    });
   };
 
   const stats = {
@@ -172,6 +246,9 @@ const Index = () => {
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Extension Simulator */}
+            <ExtensionSimulator onProductSpotted={handleExtensionSpot} />
+
             {/* Demo Section */}
             <Card className="border-amber-200 bg-amber-50">
               <CardHeader>
@@ -215,30 +292,64 @@ const Index = () => {
                   
                   <TabsContent value="all" className="mt-6">
                     <div className="grid md:grid-cols-2 gap-4">
-                      {treasures.map(treasure => <TreasureCard key={treasure.id} treasure={treasure} />)}
-                      {treasures.length === 0 && <div className="col-span-2 text-center py-12 text-slate-500">
+                      {treasures.map(treasure => (
+                        <TreasureCard 
+                          key={treasure.id} 
+                          treasure={treasure}
+                          onStartHunt={handleStartHunt}
+                          onStopHunt={handleStopHunt}
+                          isHunting={huntingTreasures.has(treasure.id)}
+                        />
+                      ))}
+                      {treasures.length === 0 && (
+                        <div className="col-span-2 text-center py-12 text-slate-500">
                           <span className="text-4xl block mb-4">🪶</span>
                           <p>No treasures spotted yet!</p>
-                          <p className="text-sm">Visit a retail site and click the MyMagPye button to start collecting.</p>
-                        </div>}
+                          <p className="text-sm">Use the extension simulator above or visit a retail site with MyMagPye installed.</p>
+                        </div>
+                      )}
                     </div>
                   </TabsContent>
                   
                   <TabsContent value="hunting" className="mt-6">
                     <div className="grid md:grid-cols-2 gap-4">
-                      {treasures.filter(t => t.status === 'hunting').map(treasure => <TreasureCard key={treasure.id} treasure={treasure} />)}
+                      {treasures.filter(t => t.status === 'hunting').map(treasure => (
+                        <TreasureCard 
+                          key={treasure.id} 
+                          treasure={treasure}
+                          onStartHunt={handleStartHunt}
+                          onStopHunt={handleStopHunt}
+                          isHunting={huntingTreasures.has(treasure.id)}
+                        />
+                      ))}
                     </div>
                   </TabsContent>
                   
                   <TabsContent value="found" className="mt-6">
                     <div className="grid md:grid-cols-2 gap-4">
-                      {treasures.filter(t => t.status === 'found').map(treasure => <TreasureCard key={treasure.id} treasure={treasure} />)}
+                      {treasures.filter(t => t.status === 'found').map(treasure => (
+                        <TreasureCard 
+                          key={treasure.id} 
+                          treasure={treasure}
+                          onStartHunt={handleStartHunt}
+                          onStopHunt={handleStopHunt}
+                          isHunting={huntingTreasures.has(treasure.id)}
+                        />
+                      ))}
                     </div>
                   </TabsContent>
                   
                   <TabsContent value="claimed" className="mt-6">
                     <div className="grid md:grid-cols-2 gap-4">
-                      {treasures.filter(t => t.status === 'claimed').map(treasure => <TreasureCard key={treasure.id} treasure={treasure} />)}
+                      {treasures.filter(t => t.status === 'claimed').map(treasure => (
+                        <TreasureCard 
+                          key={treasure.id} 
+                          treasure={treasure}
+                          onStartHunt={handleStartHunt}
+                          onStopHunt={handleStopHunt}
+                          isHunting={huntingTreasures.has(treasure.id)}
+                        />
+                      ))}
                     </div>
                   </TabsContent>
                 </Tabs>

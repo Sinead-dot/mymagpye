@@ -1,36 +1,47 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ExternalLink, Clock, CheckCircle, Search, Trash2 } from "lucide-react";
-
-interface Treasure {
-  id: string;
-  title: string;
-  brand: string;
-  price: number;
-  image: string;
-  status: 'hunting' | 'found' | 'claimed';
-  platform?: string;
-  foundPrice?: number;
-  dateSpotted: string;
-  lastHunted: string;
-  confidence?: number;
-}
+import { ExternalLink, Clock, CheckCircle, Search, Trash2, Zap, Target } from "lucide-react";
+import { Treasure } from "@/types/treasure";
 
 interface TreasureCardProps {
   treasure: Treasure;
+  onStartHunt?: (treasureId: string) => void;
+  onStopHunt?: (treasureId: string) => void;
+  isHunting?: boolean;
 }
 
-const TreasureCard: React.FC<TreasureCardProps> = ({ treasure }) => {
+const TreasureCard: React.FC<TreasureCardProps> = ({ treasure, onStartHunt, onStopHunt, isHunting = false }) => {
+  const [huntingProgress, setHuntingProgress] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    
+    if (isHunting) {
+      interval = setInterval(() => {
+        setHuntingProgress(prev => {
+          const next = prev + (Math.random() * 10 + 5);
+          return next > 100 ? 0 : next; // Reset when reaches 100%
+        });
+      }, 1000);
+    } else {
+      setHuntingProgress(0);
+    }
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isHunting]);
+
   const getStatusConfig = (status: string) => {
     switch (status) {
       case 'hunting':
         return {
-          icon: <Search className="w-4 h-4" />,
-          color: 'bg-blue-100 text-blue-800',
-          label: 'Hunting'
+          icon: isHunting ? <Target className="w-4 h-4 animate-pulse" /> : <Search className="w-4 h-4" />,
+          color: isHunting ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800',
+          label: isHunting ? 'Hunting...' : 'Ready to Hunt'
         };
       case 'found':
         return {
@@ -59,7 +70,7 @@ const TreasureCard: React.FC<TreasureCardProps> = ({ treasure }) => {
   return (
     <Card className={`transition-all duration-200 hover:shadow-md ${
       treasure.status === 'found' ? 'ring-2 ring-green-200 bg-green-50' : ''
-    }`}>
+    } ${isHunting ? 'ring-2 ring-orange-200 bg-orange-50' : ''}`}>
       <CardContent className="p-4">
         <div className="flex space-x-3">
           {/* Image */}
@@ -87,6 +98,22 @@ const TreasureCard: React.FC<TreasureCardProps> = ({ treasure }) => {
                 </span>
               </Badge>
             </div>
+
+            {/* Hunting Progress */}
+            {isHunting && (
+              <div className="mb-3">
+                <div className="flex items-center justify-between text-xs text-orange-600 mb-1">
+                  <span>Scanning platforms...</span>
+                  <span>{Math.round(huntingProgress)}%</span>
+                </div>
+                <div className="w-full bg-orange-200 rounded-full h-1">
+                  <div 
+                    className="bg-orange-600 h-1 rounded-full transition-all duration-1000"
+                    style={{ width: `${huntingProgress}%` }}
+                  />
+                </div>
+              </div>
+            )}
 
             {/* Price Info */}
             <div className="space-y-1 mb-3">
@@ -133,10 +160,29 @@ const TreasureCard: React.FC<TreasureCardProps> = ({ treasure }) => {
               )}
               
               {treasure.status === 'hunting' && (
-                <Button size="sm" variant="outline" className="flex-1">
-                  <Search className="w-3 h-3 mr-1" />
-                  Hunt Now
-                </Button>
+                <>
+                  {!isHunting ? (
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => onStartHunt?.(treasure.id)}
+                    >
+                      <Zap className="w-3 h-3 mr-1" />
+                      Start Hunt
+                    </Button>
+                  ) : (
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => onStopHunt?.(treasure.id)}
+                    >
+                      <Target className="w-3 h-3 mr-1" />
+                      Stop Hunt
+                    </Button>
+                  )}
+                </>
               )}
 
               <Button size="sm" variant="ghost" className="px-2">
