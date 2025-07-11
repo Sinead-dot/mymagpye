@@ -1,4 +1,3 @@
-
 // MyMagPye Content Script - Enhanced with Sidebar Panel
 class MyMagPyeExtension {
   constructor() {
@@ -370,58 +369,42 @@ class MyMagPyeExtension {
     this.saveButton.className = 'mymagpye-save-btn';
     this.saveButton.onclick = () => this.saveProduct();
     
-    // Find the best insertion point - look for elements that are typically halfway down the page
-    const insertionPoints = [
-      // Product description/details area (usually mid-page)
-      '#feature-bullets',
-      '#productDescription',
-      '.product-description',
-      '.product-details',
-      '#detailBullets_feature_div',
-      
-      // Reviews section (usually mid-page)
-      '#reviews-medley-footer',
-      '#customerReviews',
-      '.reviews-section',
-      
-      // Related products or recommendations (mid-page)
-      '#similarities_feature_div',
-      '#HLCXComparisonWidget_feature_div',
-      
-      // Alternative spots if above not found
-      '.product-info',
-      '.product-summary',
-      '#priceblock_dealprice',
-      '.price-section',
-      '.product-price',
-      '.price'
-    ];
+    // Always position as floating button on the right side, halfway down
+    this.saveButton.style.cssText = `
+      position: fixed !important;
+      top: 50% !important;
+      right: 20px !important;
+      transform: translateY(-50%) !important;
+      z-index: 10000 !important;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5) !important;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      color: white !important;
+      border: none !important;
+      padding: 12px 24px !important;
+      border-radius: 8px !important;
+      font-weight: bold !important;
+      cursor: pointer !important;
+      margin: 0 !important;
+      font-size: 14px !important;
+      transition: all 0.3s ease !important;
+      max-width: 200px !important;
+      white-space: nowrap !important;
+    `;
     
-    let inserted = false;
-    for (const selector of insertionPoints) {
-      const element = document.querySelector(selector);
-      if (element && element.offsetParent !== null) { // Check if element is visible
-        // Insert before the element to appear above it
-        element.insertAdjacentElement('beforebegin', this.saveButton);
-        inserted = true;
-        console.log('✅ Button inserted before:', selector);
-        break;
-      }
-    }
+    // Add hover effect
+    this.saveButton.addEventListener('mouseenter', () => {
+      this.saveButton.style.transform = 'translateY(-50%) translateX(-2px)';
+      this.saveButton.style.boxShadow = '0 6px 25px rgba(102, 126, 234, 0.6)';
+    });
     
-    // Fallback: add to body with fixed positioning at middle of viewport
-    if (!inserted) {
-      this.saveButton.style.cssText += `
-        position: fixed;
-        top: 50%;
-        right: 20px;
-        transform: translateY(-50%);
-        z-index: 10000;
-        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5);
-      `;
-      document.body.appendChild(this.saveButton);
-      console.log('✅ Button added to body at middle of viewport (fallback)');
-    }
+    this.saveButton.addEventListener('mouseleave', () => {
+      this.saveButton.style.transform = 'translateY(-50%)';
+      this.saveButton.style.boxShadow = '0 4px 20px rgba(102, 126, 234, 0.5)';
+    });
+    
+    // Always add to body with fixed positioning
+    document.body.appendChild(this.saveButton);
+    console.log('✅ Button positioned as floating element on right side, halfway down');
   }
 
   async saveProduct() {
