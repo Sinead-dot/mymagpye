@@ -125,16 +125,14 @@ const Index = () => {
                 <Target className="w-10 h-10 text-blue-600" />
               </div>
               <h3 className="text-2xl font-bold text-slate-900 mb-4">SPOT</h3>
-              <p className="text-slate-600 mb-4">Browse any retail websites and spot items you love. Our magpye searches for your secondhand treasure.</p>
+              <p className="text-slate-600 mb-4">Browse any retail websites and spot items you love.</p>
               <div className="text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">
                 Click the MyMagPye button while shopping online
               </div>
             </div>
 
             {/* Arrow */}
-            <div className="hidden md:flex items-center justify-center">
-              <ArrowRight className="w-8 h-8 text-slate-400" />
-            </div>
+            
 
             {/* SNAG */}
             <div className="text-center group">
@@ -151,9 +149,7 @@ const Index = () => {
             </div>
 
             {/* Arrow */}
-            <div className="hidden md:flex items-center justify-center md:col-start-2">
-              <ArrowRight className="w-8 h-8 text-slate-400" />
-            </div>
+            
 
             {/* SAVE */}
             <div className="text-center group md:col-start-3">
@@ -161,9 +157,7 @@ const Index = () => {
                 <DollarSign className="w-10 h-10 text-green-600" />
               </div>
               <h3 className="text-2xl font-bold text-slate-900 mb-4">SAVE</h3>
-              <p className="text-slate-600 mb-4">
-                Get notified when we find your items at amazing prices. Save money while shopping sustainably.
-              </p>
+              <p className="text-slate-600 mb-4">Get notified when we find your treasure at amazing prices. Save money while shopping sustainably.</p>
               <div className="text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">
                 Up to 70% off retail prices
               </div>
