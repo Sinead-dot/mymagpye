@@ -114,7 +114,7 @@ const Index = () => {
       <section className="bg-white py-16 border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">How MyMagPye Works</h2>
+            <h2 className="text-4xl font-bold text-slate-900 mb-4"> Your Secondhand Shopping Companion</h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">Your clever magpie companion makes secondhand shopping easy with our simple three-step process</p>
           </div>
           
