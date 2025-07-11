@@ -9,16 +9,17 @@ import TreasureCard from "@/components/TreasureCard";
 import SpotButton from "@/components/SpotButton";
 import HuntingStats from "@/components/HuntingStats";
 import NotificationDemo from "@/components/NotificationDemo";
+import { Treasure } from "@/types/treasure";
 
 const Index = () => {
-  const [treasures, setTreasures] = useState([
+  const [treasures, setTreasures] = useState<Treasure[]>([
     {
       id: '1',
       title: 'Linen Midi Dress',
       brand: 'Sezane',
       price: 150,
       image: '/placeholder.svg',
-      status: 'found',
+      status: 'found' as const,
       platform: 'Vinted',
       foundPrice: 89,
       dateSpotted: '2025-01-08',
@@ -31,7 +32,7 @@ const Index = () => {
       brand: 'Zara',
       price: 89,
       image: '/placeholder.svg',
-      status: 'hunting',
+      status: 'hunting' as const,
       dateSpotted: '2025-01-10',
       lastHunted: '2025-01-11',
       confidence: null
@@ -42,7 +43,7 @@ const Index = () => {
       brand: 'H&M',
       price: 29,
       image: '/placeholder.svg', 
-      status: 'claimed',
+      status: 'claimed' as const,
       platform: 'eBay',
       foundPrice: 18,
       dateSpotted: '2025-01-06',
@@ -55,13 +56,13 @@ const Index = () => {
   const [notifications, setNotifications] = useState([]);
 
   const handleSpotTreasure = () => {
-    const newTreasure = {
+    const newTreasure: Treasure = {
       id: Date.now().toString(),
       title: 'Demo Treasure Item',
       brand: 'Sample Brand',
       price: 75,
       image: '/placeholder.svg',
-      status: 'hunting',
+      status: 'hunting' as const,
       dateSpotted: new Date().toISOString().split('T')[0],
       lastHunted: new Date().toISOString().split('T')[0],
       confidence: null
@@ -73,14 +74,14 @@ const Index = () => {
     setTimeout(() => {
       setTreasures(prev => prev.map(t => 
         t.id === newTreasure.id 
-          ? { ...t, status: 'found', platform: 'Vinted', foundPrice: 45, confidence: 91 }
+          ? { ...t, status: 'found' as const, platform: 'Vinted', foundPrice: 45, confidence: 91 }
           : t
       ));
       
       setNotifications(prev => [...prev, {
         id: Date.now(),
         type: 'treasure_found',
-        treasure: { ...newTreasure, status: 'found', platform: 'Vinted', foundPrice: 45 }
+        treasure: { ...newTreasure, status: 'found' as const, platform: 'Vinted', foundPrice: 45 }
       }]);
     }, 3000);
   };
