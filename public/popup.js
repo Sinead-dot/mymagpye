@@ -158,23 +158,25 @@ class PopupManager {
       try {
         await chrome.storage.local.set({ savedItems: [], huntResults: {} });
         
-        // Safely refresh the display
+        // Safely refresh the display with proper null checks
         const emptyState = document.getElementById('emptyState');
         const content = document.getElementById('content');
         
-        if (emptyState && content) {
+        if (content) {
           // Remove all items from content
           const existingItems = content.querySelectorAll('.item');
           existingItems.forEach(item => item.remove());
-          
-          // Show empty state
-          emptyState.style.display = 'block';
           
           // Remove hunt stats if they exist
           const huntStats = content.querySelector('.hunt-stats');
           if (huntStats) {
             huntStats.remove();
           }
+        }
+        
+        if (emptyState) {
+          // Show empty state
+          emptyState.style.display = 'block';
         }
         
         console.log('All items cleared');
