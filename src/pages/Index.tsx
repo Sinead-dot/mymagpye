@@ -105,11 +105,11 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center overflow-hidden">
                 <img 
                   src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" 
                   alt="MyMagPye Logo" 
-                  className="w-12 h-12 object-contain"
+                  className="w-16 h-16 object-contain"
                 />
               </div>
               <div>
@@ -252,7 +252,7 @@ const Index = () => {
             <img 
               src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" 
               alt="MyMagPye Logo" 
-              className="w-8 h-8 object-contain filter brightness-0 invert"
+              className="w-12 h-12 object-contain filter brightness-0 invert"
             />
             <h3 className="text-xl font-bold">MyMagPye</h3>
           </div>
