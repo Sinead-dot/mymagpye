@@ -112,10 +112,17 @@ const Index = () => {
       <header className="py-6 px-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Button variant="outline" size="sm">
-              How it Works
-            </Button>
-            <Button size="sm">Get Extension</Button>
+            <img 
+              src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" 
+              alt="MyMagPye Logo" 
+              className="w-[250px] h-[250px] object-contain"
+            />
+            <div className="flex space-x-4">
+              <Button variant="outline" size="sm">
+                How it Works
+              </Button>
+              <Button size="sm">Get Extension</Button>
+            </div>
           </div>
           
           <div className="flex items-center space-x-4">
@@ -144,12 +151,6 @@ const Index = () => {
                 </Button>
               </div>
             )}
-            
-            <img 
-              src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" 
-              alt="MyMagPye Logo" 
-              className="h-8"
-            />
           </div>
         </div>
       </header>
