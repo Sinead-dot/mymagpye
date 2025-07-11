@@ -1,8 +1,9 @@
-
-// MyMagPye Content Script - MVP Version
+// MyMagPye Content Script - Enhanced with Sidebar Panel
 class MyMagPyeExtension {
   constructor() {
     this.saveButton = null;
+    this.sidebar = null;
+    this.sidebarOpen = false;
     this.productData = null;
     this.isProcessing = false;
     this.init();
@@ -28,17 +29,191 @@ class MyMagPyeExtension {
     
     console.log('🔍 Setting up MyMagPye on:', window.location.hostname);
     
-    // Extract product data
+    // Always create the sidebar and toggle button
+    this.createSidebar();
+    this.createToggleButton();
+    
+    // Extract product data if on product page
     this.productData = this.extractProductData();
     
     if (this.productData) {
       this.createSaveButton();
       console.log('✅ MyMagPye: Product detected', this.productData);
-    } else {
-      console.log('❌ MyMagPye: No product detected on this page');
     }
     
     this.isProcessing = false;
+  }
+
+  createToggleButton() {
+    // Remove any existing toggle button
+    const existingToggle = document.querySelector('.mymagpye-toggle-btn');
+    if (existingToggle) {
+      existingToggle.remove();
+    }
+
+    // Create floating toggle button (always visible)
+    const toggleBtn = document.createElement('button');
+    toggleBtn.innerHTML = '🔍';
+    toggleBtn.className = 'mymagpye-toggle-btn';
+    toggleBtn.title = 'Toggle MyMagPye Sidebar';
+    toggleBtn.onclick = () => this.toggleSidebar();
+    
+    document.body.appendChild(toggleBtn);
+  }
+
+  createSidebar() {
+    // Remove any existing sidebar
+    const existingSidebar = document.querySelector('.mymagpye-sidebar');
+    if (existingSidebar) {
+      existingSidebar.remove();
+    }
+
+    // Create sidebar container
+    this.sidebar = document.createElement('div');
+    this.sidebar.className = 'mymagpye-sidebar';
+    this.sidebar.innerHTML = `
+      <div class="mymagpye-sidebar-header">
+        <div class="mymagpye-sidebar-logo">
+          <span class="mymagpye-logo-icon">🔍</span>
+          <span class="mymagpye-logo-text">MyMagPye</span>
+        </div>
+        <button class="mymagpye-close-btn" onclick="myMagPyeExtension.toggleSidebar()">×</button>
+      </div>
+      <div class="mymagpye-sidebar-content">
+        <div class="mymagpye-sidebar-section">
+          <h3>Saved Items</h3>
+          <div id="mymagpye-saved-items" class="mymagpye-items-list">
+            <div class="mymagpye-empty-state">
+              <div class="mymagpye-empty-icon">🏴‍☠️</div>
+              <p>No treasures saved yet!</p>
+              <small>Browse products and click "Hunt for Better Deals" to start collecting treasures.</small>
+            </div>
+          </div>
+        </div>
+        <div class="mymagpye-sidebar-section">
+          <h3>Hunt Results</h3>
+          <div id="mymagpye-hunt-results" class="mymagpye-results-list">
+            <div class="mymagpye-empty-state">
+              <div class="mymagpye-empty-icon">🏴‍☠️</div>
+              <p>No hunt results yet!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mymagpye-sidebar-footer">
+        <button class="mymagpye-full-app-btn" onclick="chrome.tabs.create({ url: chrome.runtime.getURL('index.html') })">
+          Open Full App
+        </button>
+      </div>
+    `;
+    
+    document.body.appendChild(this.sidebar);
+    
+    // Load saved items and hunt results
+    this.loadSidebarData();
+  }
+
+  toggleSidebar() {
+    if (this.sidebarOpen) {
+      this.sidebar.classList.remove('mymagpye-sidebar-open');
+      this.sidebarOpen = false;
+    } else {
+      this.sidebar.classList.add('mymagpye-sidebar-open');
+      this.sidebarOpen = true;
+      // Refresh data when opening
+      this.loadSidebarData();
+    }
+  }
+
+  async loadSidebarData() {
+    try {
+      const result = await chrome.storage.local.get(['savedItems', 'huntResults']);
+      const savedItems = result.savedItems || [];
+      const huntResults = result.huntResults || {};
+      
+      this.displaySavedItems(savedItems);
+      this.displayHuntResults(huntResults);
+    } catch (error) {
+      console.error('Error loading sidebar data:', error);
+    }
+  }
+
+  displaySavedItems(items) {
+    const container = document.getElementById('mymagpye-saved-items');
+    
+    if (items.length === 0) {
+      container.innerHTML = `
+        <div class="mymagpye-empty-state">
+          <div class="mymagpye-empty-icon">🏴‍☠️</div>
+          <p>No treasures saved yet!</p>
+          <small>Browse products and click "Hunt for Better Deals" to start collecting treasures.</small>
+        </div>
+      `;
+      return;
+    }
+    
+    container.innerHTML = items.map((item, index) => `
+      <div class="mymagpye-sidebar-item" onclick="window.open('${item.url}', '_blank')">
+        <img src="${item.image}" alt="${item.title}" class="mymagpye-item-image" onerror="this.src='/placeholder.svg'">
+        <div class="mymagpye-item-info">
+          <div class="mymagpye-item-title">${item.title.length > 40 ? item.title.substring(0, 40) + '...' : item.title}</div>
+          <div class="mymagpye-item-price">£${typeof item.price === 'number' ? item.price.toFixed(2) : item.price}</div>
+          <div class="mymagpye-item-platform">${item.platform}</div>
+        </div>
+        <button class="mymagpye-remove-btn" onclick="event.stopPropagation(); myMagPyeExtension.removeItem(${index})">×</button>
+      </div>
+    `).join('');
+  }
+
+  displayHuntResults(huntResults) {
+    const container = document.getElementById('mymagpye-hunt-results');
+    const resultEntries = Object.entries(huntResults);
+    
+    if (resultEntries.length === 0) {
+      container.innerHTML = `
+        <div class="mymagpye-empty-state">
+          <div class="mymagpye-empty-icon">🔍</div>
+          <p>No hunt results yet!</p>
+        </div>
+      `;
+      return;
+    }
+    
+    container.innerHTML = resultEntries.map(([url, result]) => `
+      <div class="mymagpye-hunt-result">
+        <div class="mymagpye-result-header">
+          <strong>${result.originalItem?.title || 'Product'}</strong>
+          <span class="mymagpye-deals-count">${result.betterDeals?.length || 0} deals found</span>
+        </div>
+        ${result.betterDeals?.length > 0 ? `
+          <div class="mymagpye-deals-list">
+            ${result.betterDeals.slice(0, 2).map(deal => `
+              <div class="mymagpye-deal-item" onclick="window.open('${deal.url}', '_blank')">
+                <span class="mymagpye-deal-platform">${deal.platform}</span>
+                <span class="mymagpye-deal-price">£${deal.price}</span>
+                <span class="mymagpye-savings">Save £${(result.originalItem.price - deal.price).toFixed(2)}</span>
+              </div>
+            `).join('')}
+          </div>
+        ` : '<p class="mymagpye-no-deals">No better deals found</p>'}
+      </div>
+    `).join('');
+  }
+
+  async removeItem(index) {
+    try {
+      const result = await chrome.storage.local.get(['savedItems']);
+      const savedItems = result.savedItems || [];
+      
+      savedItems.splice(index, 1);
+      await chrome.storage.local.set({ savedItems });
+      
+      this.loadSidebarData();
+      this.showNotification('Item removed successfully', 'success');
+    } catch (error) {
+      console.error('Error removing item:', error);
+      this.showNotification('Error removing item', 'error');
+    }
   }
 
   extractProductData() {
@@ -221,7 +396,7 @@ class MyMagPyeExtension {
     if (!inserted) {
       this.saveButton.style.cssText += `
         position: fixed;
-        top: 20px;
+        top: 60px;
         right: 20px;
         z-index: 10000;
         box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5);
@@ -272,6 +447,11 @@ class MyMagPyeExtension {
       this.showNotification('Started hunting for better deals! 🏴‍☠️', 'success');
       this.saveButton.innerHTML = '✅ Hunt Started';
       
+      // Refresh sidebar if open
+      if (this.sidebarOpen) {
+        this.loadSidebarData();
+      }
+      
       console.log('✅ Product saved and hunt started:', this.productData.title);
       
     } catch (error) {
@@ -292,7 +472,7 @@ class MyMagPyeExtension {
     notification.textContent = message;
     notification.style.cssText = `
       position: fixed;
-      top: 80px;
+      top: 120px;
       right: 20px;
       z-index: 10001;
       max-width: 300px;
@@ -308,6 +488,5 @@ class MyMagPyeExtension {
   }
 }
 
-// Initialize extension
-console.log('🚀 MyMagPye Content Script loaded');
-new MyMagPyeExtension();
+// Initialize extension - make it globally accessible
+const myMagPyeExtension = new MyMagPyeExtension();
