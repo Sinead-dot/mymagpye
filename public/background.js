@@ -1,4 +1,3 @@
-
 // Background script for MyMagPye extension - Web App Integration
 class BackgroundService {
   constructor() {
@@ -8,14 +7,25 @@ class BackgroundService {
   init() {
     // Listen for messages from content script
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      console.log('Background received message:', request);
+      
       if (request.action === 'saveToWebApp') {
-        this.forwardToWebApp(request.treasure);
-        sendResponse({ success: true });
+        this.forwardToWebApp(request.treasure)
+          .then(() => sendResponse({ success: true }))
+          .catch(error => {
+            console.error('Error forwarding to web app:', error);
+            sendResponse({ success: false, error: error.message });
+          });
+        return true; // Keep message channel open for async response
       } else if (request.action === 'startHunting') {
-        this.startHunting(request.productData);
-        sendResponse({ success: true });
+        this.startHunting(request.productData)
+          .then(() => sendResponse({ success: true }))
+          .catch(error => {
+            console.error('Error starting hunt:', error);
+            sendResponse({ success: false, error: error.message });
+          });
+        return true; // Keep message channel open for async response
       }
-      return true; // Keep message channel open for async response
     });
 
     // Set up periodic checks for better deals (every 2 hours for MVP)
@@ -40,17 +50,20 @@ class BackgroundService {
 
       // Send message to all MyMagPye tabs
       for (const tab of tabs) {
-        chrome.tabs.sendMessage(tab.id, {
-          type: 'MYMAGPYE_SAVE_TREASURE',
-          treasure: treasure
-        }).catch(err => {
+        try {
+          await chrome.tabs.sendMessage(tab.id, {
+            type: 'MYMAGPYE_SAVE_TREASURE',
+            treasure: treasure
+          });
+        } catch (err) {
           console.log('Could not send to tab:', tab.id, err);
-        });
+        }
       }
 
       console.log('✅ Forwarded treasure to web app tabs:', tabs.length);
     } catch (error) {
       console.error('Error forwarding to web app:', error);
+      throw error;
     }
   }
 
@@ -66,6 +79,7 @@ class BackgroundService {
       
     } catch (error) {
       console.error('Error starting hunt:', error);
+      throw error;
     }
   }
 

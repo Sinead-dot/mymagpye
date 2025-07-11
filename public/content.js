@@ -49,6 +49,7 @@ class MyMagPyeExtension {
   async saveProduct() {
     if (!this.productData) {
       console.error('No product data to save');
+      this.notificationManager.showNotification('No product data to save', 'error');
       return;
     }
     
@@ -86,7 +87,7 @@ class MyMagPyeExtension {
       
     } catch (error) {
       console.error('Error saving product:', error);
-      this.notificationManager.showNotification('Error saving treasure', 'error');
+      this.notificationManager.showNotification('Error saving treasure: ' + error.message, 'error');
       if (huntBtn) {
         huntBtn.textContent = '❌ Error';
       }
@@ -122,10 +123,15 @@ class MyMagPyeExtension {
       
       // Also try to communicate with any MyMagPye web app tabs
       if (typeof chrome !== 'undefined' && chrome.runtime) {
-        chrome.runtime.sendMessage({
-          action: 'saveToWebApp',
-          treasure: messageData.treasure
-        });
+        try {
+          await chrome.runtime.sendMessage({
+            action: 'saveToWebApp',
+            treasure: messageData.treasure
+          });
+        } catch (chromeError) {
+          console.log('Chrome extension messaging failed:', chromeError);
+          // Don't throw here as postMessage might still work
+        }
       }
 
       return true;
@@ -136,25 +142,49 @@ class MyMagPyeExtension {
   }
 
   async saveToLocalStorage(productData) {
-    const result = await chrome.storage.local.get(['savedItems']);
-    const savedItems = result.savedItems || [];
-    
-    const exists = savedItems.some(item => item.url === productData.url);
-    if (exists) {
-      throw new Error('Item already exists');
+    try {
+      // Check if chrome.storage is available
+      if (typeof chrome === 'undefined' || !chrome.storage) {
+        throw new Error('Chrome storage not available');
+      }
+
+      const result = await chrome.storage.local.get(['savedItems']);
+      const savedItems = result.savedItems || [];
+      
+      const exists = savedItems.some(item => item.url === productData.url);
+      if (exists) {
+        throw new Error('Item already exists');
+      }
+      
+      savedItems.push(productData);
+      await chrome.storage.local.set({ savedItems });
+      
+      // Try to start hunting, but don't fail if it doesn't work
+      if (chrome.runtime) {
+        try {
+          await chrome.runtime.sendMessage({
+            action: 'startHunting',
+            productData: productData
+          });
+        } catch (huntError) {
+          console.log('Failed to start hunting:', huntError);
+          // Don't throw here - the item was still saved locally
+        }
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Failed to save to local storage:', error);
+      throw error;
     }
-    
-    savedItems.push(productData);
-    await chrome.storage.local.set({ savedItems });
-    
-    chrome.runtime.sendMessage({
-      action: 'startHunting',
-      productData: productData
-    });
   }
 
   async removeItem(index) {
     try {
+      if (typeof chrome === 'undefined' || !chrome.storage) {
+        throw new Error('Chrome storage not available');
+      }
+
       const result = await chrome.storage.local.get(['savedItems']);
       const savedItems = result.savedItems || [];
       
@@ -165,7 +195,7 @@ class MyMagPyeExtension {
       this.notificationManager.showNotification('Item removed successfully', 'success');
     } catch (error) {
       console.error('Error removing item:', error);
-      this.notificationManager.showNotification('Error removing item', 'error');
+      this.notificationManager.showNotification('Error removing item: ' + error.message, 'error');
     }
   }
 }
