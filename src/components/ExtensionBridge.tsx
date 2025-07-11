@@ -65,7 +65,7 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
     window.addEventListener('message', handleExtensionMessage);
     
     // Also listen for chrome extension messages if available
-    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
+    if (typeof window !== 'undefined' && 'chrome' in window && (window as any).chrome?.runtime?.onMessage) {
       const chromeMessageHandler = (request: any, sender: any, sendResponse: any) => {
         console.log('🔗 Chrome extension message received:', request);
         
@@ -80,12 +80,12 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
         }
       };
       
-      chrome.runtime.onMessage.addListener(chromeMessageHandler);
+      (window as any).chrome.runtime.onMessage.addListener(chromeMessageHandler);
       
       return () => {
         window.removeEventListener('message', handleExtensionMessage);
-        if (chrome.runtime && chrome.runtime.onMessage) {
-          chrome.runtime.onMessage.removeListener(chromeMessageHandler);
+        if ((window as any).chrome?.runtime?.onMessage) {
+          (window as any).chrome.runtime.onMessage.removeListener(chromeMessageHandler);
         }
       };
     }
