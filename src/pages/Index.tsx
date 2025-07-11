@@ -105,8 +105,12 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-slate-800 to-slate-600 rounded-full flex items-center justify-center">
-                <span className="text-2xl">🪶</span>
+              <div className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden">
+                <img 
+                  src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" 
+                  alt="MyMagPye Logo" 
+                  className="w-12 h-12 object-contain"
+                />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-slate-800">MyMagPye</h1>
@@ -245,7 +249,11 @@ const Index = () => {
       <footer className="bg-slate-800 text-white py-8 mt-16">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <span className="text-2xl">🪶</span>
+            <img 
+              src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" 
+              alt="MyMagPye Logo" 
+              className="w-8 h-8 object-contain filter brightness-0 invert"
+            />
             <h3 className="text-xl font-bold">MyMagPye</h3>
           </div>
           <p className="text-slate-300 mb-4">Spot. Save. Snag.</p>
