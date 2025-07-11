@@ -28,10 +28,12 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
         addTreasure(treasure);
         
         // Send confirmation back to extension
-        event.source?.postMessage({
-          type: 'MYMAGPYE_TREASURE_SAVED',
-          success: true
-        }, '*');
+        if (event.source) {
+          (event.source as Window).postMessage({
+            type: 'MYMAGPYE_TREASURE_SAVED',
+            success: true
+          }, { targetOrigin: '*' });
+        }
       } else if (event.data?.type === 'MYMAGPYE_SAVE_TREASURE' && !user) {
         toast({
           title: "Sign In Required",
@@ -40,11 +42,13 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
         });
         
         // Send error back to extension
-        event.source?.postMessage({
-          type: 'MYMAGPYE_TREASURE_SAVED',
-          success: false,
-          error: 'User not authenticated'
-        }, '*');
+        if (event.source) {
+          (event.source as Window).postMessage({
+            type: 'MYMAGPYE_TREASURE_SAVED',
+            success: false,
+            error: 'User not authenticated'
+          }, { targetOrigin: '*' });
+        }
       }
     };
 
