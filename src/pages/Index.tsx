@@ -73,7 +73,7 @@ const Index = () => {
     spotted: treasures.length,
     hunting: treasures.filter(t => t.status === 'hunting').length,
     found: treasures.filter(t => t.status === 'found').length,
-    claimed: treasures.filter(t => t.status === 'claimed').length,
+    claimed: 0, // Set to 0 since 'claimed' is not a valid status
     totalSaved: treasures
       .filter(t => t.foundPrice)
       .reduce((acc, t) => acc + (t.price - (t.foundPrice || 0)), 0),
