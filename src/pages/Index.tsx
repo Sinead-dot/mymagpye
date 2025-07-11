@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -57,7 +58,7 @@ const Index = () => {
     status: 'found' as const,
     foundPrice: 25.00
   }]);
-  const [notifications, setNotifications] = useState([]);
+
   const handleProductSpotted = (product: any) => {
     const newTreasure = {
       ...product,
@@ -69,6 +70,7 @@ const Index = () => {
     };
     setTreasures([newTreasure, ...treasures]);
   };
+
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -91,7 +93,6 @@ const Index = () => {
     hunting: treasures.filter(t => t.status === 'hunting').length,
     found: treasures.filter(t => t.status === 'found').length,
     claimed: 0,
-    // Set to 0 since 'claimed' is not a valid status
     totalSaved: treasures.filter(t => t.foundPrice).reduce((acc, t) => acc + (t.price - (t.foundPrice || 0)), 0)
   };
 

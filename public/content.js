@@ -1,3 +1,4 @@
+
 // MyMagPye Content Script - Enhanced with Sidebar Panel
 class MyMagPyeExtension {
   constructor() {
@@ -369,12 +370,27 @@ class MyMagPyeExtension {
     this.saveButton.className = 'mymagpye-save-btn';
     this.saveButton.onclick = () => this.saveProduct();
     
-    // Try to find a good place to insert the button
+    // Find the best insertion point - look for elements that are typically halfway down the page
     const insertionPoints = [
-      '.product-actions',
-      '.add-to-cart',
-      '.add-to-bag',
-      '.buy-now',
+      // Product description/details area (usually mid-page)
+      '#feature-bullets',
+      '#productDescription',
+      '.product-description',
+      '.product-details',
+      '#detailBullets_feature_div',
+      
+      // Reviews section (usually mid-page)
+      '#reviews-medley-footer',
+      '#customerReviews',
+      '.reviews-section',
+      
+      // Related products or recommendations (mid-page)
+      '#similarities_feature_div',
+      '#HLCXComparisonWidget_feature_div',
+      
+      // Alternative spots if above not found
+      '.product-info',
+      '.product-summary',
       '#priceblock_dealprice',
       '.price-section',
       '.product-price',
@@ -385,24 +401,26 @@ class MyMagPyeExtension {
     for (const selector of insertionPoints) {
       const element = document.querySelector(selector);
       if (element && element.offsetParent !== null) { // Check if element is visible
-        element.insertAdjacentElement('afterend', this.saveButton);
+        // Insert before the element to appear above it
+        element.insertAdjacentElement('beforebegin', this.saveButton);
         inserted = true;
-        console.log('✅ Button inserted after:', selector);
+        console.log('✅ Button inserted before:', selector);
         break;
       }
     }
     
-    // Fallback: add to body with fixed positioning
+    // Fallback: add to body with fixed positioning at middle of viewport
     if (!inserted) {
       this.saveButton.style.cssText += `
         position: fixed;
-        top: 60px;
+        top: 50%;
         right: 20px;
+        transform: translateY(-50%);
         z-index: 10000;
         box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5);
       `;
       document.body.appendChild(this.saveButton);
-      console.log('✅ Button added to body (fallback)');
+      console.log('✅ Button added to body at middle of viewport (fallback)');
     }
   }
 
