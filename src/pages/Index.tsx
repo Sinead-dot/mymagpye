@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Search, Bell, Heart, Star, Eye, ShoppingBag, Zap } from "lucide-react";
+import { Settings, Search, Bell, Heart, Star, Eye, ShoppingBag, Zap, Target, ArrowRight, DollarSign } from "lucide-react";
 import TreasureCard from "@/components/TreasureCard";
 import SpotButton from "@/components/SpotButton";
 import HuntingStats from "@/components/HuntingStats";
@@ -113,6 +114,72 @@ const Index = () => {
           </div>
         </div>
       </header>
+
+      {/* SPOT, SNAG, SAVE Section */}
+      <section className="bg-white py-16 border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">How MyMagPye Works</h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+              Your clever magpie companion makes sustainable shopping effortless with our simple three-step process
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* SPOT */}
+            <div className="text-center group">
+              <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-200 transition-colors">
+                <Target className="w-10 h-10 text-blue-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">SPOT</h3>
+              <p className="text-slate-600 mb-4">
+                Browse any retail website and spot items you love. Our magpie eye identifies treasures worth hunting for.
+              </p>
+              <div className="text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">
+                Click the MyMagPye button while shopping online
+              </div>
+            </div>
+
+            {/* Arrow */}
+            <div className="hidden md:flex items-center justify-center">
+              <ArrowRight className="w-8 h-8 text-slate-400" />
+            </div>
+
+            {/* SNAG */}
+            <div className="text-center group">
+              <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-orange-200 transition-colors">
+                <Search className="w-10 h-10 text-orange-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">SNAG</h3>
+              <p className="text-slate-600 mb-4">
+                We automatically hunt across secondhand platforms like Vinted, eBay, and more to find your treasures.
+              </p>
+              <div className="text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">
+                Smart AI matching finds the best deals
+              </div>
+            </div>
+
+            {/* Arrow */}
+            <div className="hidden md:flex items-center justify-center md:col-start-2">
+              <ArrowRight className="w-8 h-8 text-slate-400" />
+            </div>
+
+            {/* SAVE */}
+            <div className="text-center group md:col-start-3">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-green-200 transition-colors">
+                <DollarSign className="w-10 h-10 text-green-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-4">SAVE</h3>
+              <p className="text-slate-600 mb-4">
+                Get notified when we find your items at amazing prices. Save money while shopping sustainably.
+              </p>
+              <div className="text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">
+                Up to 70% off retail prices
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-3 gap-6">
