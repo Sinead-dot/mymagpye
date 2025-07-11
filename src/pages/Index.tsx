@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Gem } from "lucide-react";
+import { Gem, Eye, Target, ShoppingBag } from "lucide-react";
 import TreasureCard from "@/components/TreasureCard";
 import ExtensionSimulator from "@/components/ExtensionSimulator";
 import HuntingStats from "@/components/HuntingStats";
@@ -106,6 +106,66 @@ const Index = () => {
           </div>
         </div>
       </header>
+
+      {/* Spot, Save, Snag Section */}
+      <section className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-slate-800 mb-4">Spot, Save, Snag</h2>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            Transform your shopping with MyMagPye's intelligent treasure hunting system
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          {/* Spot Panel */}
+          <Card className="text-center hover:shadow-lg transition-shadow border-blue-200 bg-blue-50">
+            <CardContent className="p-6">
+              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Eye className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800 mb-3">Spot</h3>
+              <p className="text-slate-600 mb-4">
+                Browse your favorite retail sites while our extension automatically spots items you love
+              </p>
+              <div className="text-sm text-blue-700 font-medium">
+                ✨ Automatic detection across 1000+ sites
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Save Panel */}
+          <Card className="text-center hover:shadow-lg transition-shadow border-orange-200 bg-orange-50">
+            <CardContent className="p-6">
+              <div className="w-16 h-16 bg-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Target className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800 mb-3">Save</h3>
+              <p className="text-slate-600 mb-4">
+                Save items to your treasure chest and let MyMagPye hunt for better deals across secondhand platforms
+              </p>
+              <div className="text-sm text-orange-700 font-medium">
+                🔍 AI-powered hunting across multiple platforms
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Snag Panel */}
+          <Card className="text-center hover:shadow-lg transition-shadow border-green-200 bg-green-50">
+            <CardContent className="p-6">
+              <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <ShoppingBag className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800 mb-3">Snag</h3>
+              <p className="text-slate-600 mb-4">
+                Get notified instantly when we find your treasure at a better price on secondhand marketplaces
+              </p>
+              <div className="text-sm text-green-700 font-medium">
+                💰 Save up to 70% on retail prices
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
 
       <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
