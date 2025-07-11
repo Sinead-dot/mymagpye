@@ -1,4 +1,3 @@
-
 // Sidebar management utility - MindStudio-like side panel
 class SidebarManager {
   constructor() {
@@ -15,7 +14,7 @@ class SidebarManager {
       existingSidebar.remove();
     }
 
-    // Create sidebar container that pushes content like MindStudio
+    // Create sidebar container positioned further down the page
     this.sidebar = document.createElement('div');
     this.sidebar.className = 'mymagpye-sidebar mymagpye-sidebar-mindstudio';
     this.sidebar.innerHTML = `
@@ -27,12 +26,12 @@ class SidebarManager {
         <button class="mymagpye-minimize-btn" title="Minimize Panel">−</button>
       </div>
       <div class="mymagpye-sidebar-content">
-        <div class="mymagpye-sidebar-section">
-          <h3>Current Page</h3>
+        <div class="mymagpye-sidebar-section mymagpye-current-treasure">
+          <h3>Current Treasure</h3>
           <div id="mymagpye-current-product" class="mymagpye-current-section">
             <div class="mymagpye-empty-state">
               <div class="mymagpye-empty-icon">🔍</div>
-              <p>No product detected</p>
+              <p>No treasure detected on this page</p>
             </div>
           </div>
         </div>
@@ -140,15 +139,18 @@ class SidebarManager {
     if (!container || !productData) return;
 
     container.innerHTML = `
-      <div class="mymagpye-current-product-card">
-        <img src="${productData.image}" alt="${productData.title}" class="mymagpye-product-image" onerror="this.src='/placeholder.svg'">
-        <div class="mymagpye-product-info">
-          <div class="mymagpye-product-title">${productData.title.length > 30 ? productData.title.substring(0, 30) + '...' : productData.title}</div>
-          <div class="mymagpye-product-price">£${typeof productData.price === 'number' ? productData.price.toFixed(2) : productData.price}</div>
-          <div class="mymagpye-product-platform">${productData.platform}</div>
+      <div class="mymagpye-current-treasure-card">
+        <div class="mymagpye-treasure-header">
+          <img src="${productData.image}" alt="${productData.title}" class="mymagpye-treasure-image" onerror="this.src='/placeholder.svg'">
+          <div class="mymagpye-treasure-badge">💎 Found</div>
         </div>
-        <button class="mymagpye-hunt-btn" id="mymagpye-quick-hunt">
-          🔍 Hunt
+        <div class="mymagpye-treasure-info">
+          <div class="mymagpye-treasure-title">${productData.title.length > 40 ? productData.title.substring(0, 40) + '...' : productData.title}</div>
+          <div class="mymagpye-treasure-price">£${typeof productData.price === 'number' ? productData.price.toFixed(2) : productData.price}</div>
+          <div class="mymagpye-treasure-platform">from ${productData.platform}</div>
+        </div>
+        <button class="mymagpye-hunt-treasure-btn" id="mymagpye-quick-hunt">
+          🏴‍☠️ Start Hunt
         </button>
       </div>
     `;
