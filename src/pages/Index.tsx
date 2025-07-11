@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,35 +18,65 @@ const Index = () => {
     {
       id: "1",
       title: "Vintage Leather Jacket",
+      brand: "Unknown Brand",
       platform: "Etsy",
       url: "https://www.etsy.com/listing/123456789",
       dateSpotted: "2024-03-15",
+      lastHunted: "2024-03-15",
       price: 75.00,
+      image: "/placeholder.svg",
+      status: 'hunting' as const,
     },
     {
       id: "2",
       title: "Retro Floral Dress",
+      brand: "Vintage Co",
       platform: "eBay",
       url: "https://www.ebay.com/itm/987654321",
       dateSpotted: "2024-03-10",
+      lastHunted: "2024-03-10",
       price: 45.50,
+      image: "/placeholder.svg",
+      status: 'hunting' as const,
     },
     {
       id: "3",
       title: "Antique Silver Locket",
+      brand: "Antique Shop",
       platform: "ThredUp",
       url: "https://www.thredup.com/product/abcdefgh",
       dateSpotted: "2024-03-05",
+      lastHunted: "2024-03-05",
       price: 30.00,
+      image: "/placeholder.svg",
+      status: 'found' as const,
+      foundPrice: 25.00,
     },
   ]);
+
+  const [notifications, setNotifications] = useState([]);
 
   const handleProductSpotted = (product: any) => {
     const newTreasure = {
       ...product,
       id: Date.now().toString(),
+      brand: product.brand || "Unknown Brand",
+      image: product.image || "/placeholder.svg",
+      status: 'hunting' as const,
+      lastHunted: new Date().toISOString().split('T')[0],
     };
     setTreasures([newTreasure, ...treasures]);
+  };
+
+  // Calculate stats from treasures
+  const stats = {
+    spotted: treasures.length,
+    hunting: treasures.filter(t => t.status === 'hunting').length,
+    found: treasures.filter(t => t.status === 'found').length,
+    claimed: treasures.filter(t => t.status === 'claimed').length,
+    totalSaved: treasures
+      .filter(t => t.foundPrice)
+      .reduce((acc, t) => acc + (t.price - (t.foundPrice || 0)), 0),
   };
 
   if (loading) {
@@ -84,8 +115,8 @@ const Index = () => {
             
             {user && (
               <>
-                <HuntingStats />
-                <NotificationDemo />
+                <HuntingStats stats={stats} />
+                <NotificationDemo notifications={notifications} />
               </>
             )}
           </div>
