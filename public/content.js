@@ -1,3 +1,4 @@
+
 // MyMagPye Content Script - Enhanced with Sidebar Panel
 class MyMagPyeExtension {
   constructor() {
@@ -56,7 +57,7 @@ class MyMagPyeExtension {
     toggleBtn.innerHTML = '🔍';
     toggleBtn.className = 'mymagpye-toggle-btn';
     toggleBtn.title = 'Toggle MyMagPye Sidebar';
-    toggleBtn.onclick = () => this.toggleSidebar();
+    toggleBtn.addEventListener('click', () => this.toggleSidebar());
     
     document.body.appendChild(toggleBtn);
   }
@@ -77,7 +78,7 @@ class MyMagPyeExtension {
           <span class="mymagpye-logo-icon">🔍</span>
           <span class="mymagpye-logo-text">MyMagPye</span>
         </div>
-        <button class="mymagpye-close-btn" onclick="myMagPyeExtension.toggleSidebar()">×</button>
+        <button class="mymagpye-close-btn">×</button>
       </div>
       <div class="mymagpye-sidebar-content">
         <div class="mymagpye-sidebar-section">
@@ -101,11 +102,20 @@ class MyMagPyeExtension {
         </div>
       </div>
       <div class="mymagpye-sidebar-footer">
-        <button class="mymagpye-full-app-btn" onclick="chrome.tabs.create({ url: chrome.runtime.getURL('index.html') })">
+        <button class="mymagpye-full-app-btn">
           Open Full App
         </button>
       </div>
     `;
+    
+    // Add event listeners after creating the sidebar
+    const closeBtn = this.sidebar.querySelector('.mymagpye-close-btn');
+    closeBtn.addEventListener('click', () => this.toggleSidebar());
+    
+    const fullAppBtn = this.sidebar.querySelector('.mymagpye-full-app-btn');
+    fullAppBtn.addEventListener('click', () => {
+      chrome.tabs.create({ url: chrome.runtime.getURL('index.html') });
+    });
     
     document.body.appendChild(this.sidebar);
     
@@ -153,16 +163,34 @@ class MyMagPyeExtension {
     }
     
     container.innerHTML = items.map((item, index) => `
-      <div class="mymagpye-sidebar-item" onclick="window.open('${item.url}', '_blank')">
+      <div class="mymagpye-sidebar-item" data-url="${item.url}">
         <img src="${item.image}" alt="${item.title}" class="mymagpye-item-image" onerror="this.src='/placeholder.svg'">
         <div class="mymagpye-item-info">
           <div class="mymagpye-item-title">${item.title.length > 40 ? item.title.substring(0, 40) + '...' : item.title}</div>
           <div class="mymagpye-item-price">£${typeof item.price === 'number' ? item.price.toFixed(2) : item.price}</div>
           <div class="mymagpye-item-platform">${item.platform}</div>
         </div>
-        <button class="mymagpye-remove-btn" onclick="event.stopPropagation(); myMagPyeExtension.removeItem(${index})">×</button>
+        <button class="mymagpye-remove-btn" data-index="${index}">×</button>
       </div>
     `).join('');
+    
+    // Add event listeners for sidebar items
+    container.querySelectorAll('.mymagpye-sidebar-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        if (e.target.classList.contains('mymagpye-remove-btn')) return;
+        const url = item.dataset.url;
+        window.open(url, '_blank');
+      });
+    });
+    
+    // Add event listeners for remove buttons
+    container.querySelectorAll('.mymagpye-remove-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const index = parseInt(btn.dataset.index);
+        this.removeItem(index);
+      });
+    });
   }
 
   displayHuntResults(huntResults) {
@@ -188,7 +216,7 @@ class MyMagPyeExtension {
         ${result.betterDeals?.length > 0 ? `
           <div class="mymagpye-deals-list">
             ${result.betterDeals.slice(0, 2).map(deal => `
-              <div class="mymagpye-deal-item" onclick="window.open('${deal.url}', '_blank')">
+              <div class="mymagpye-deal-item" data-url="${deal.url}">
                 <span class="mymagpye-deal-platform">${deal.platform}</span>
                 <span class="mymagpye-deal-price">£${deal.price}</span>
                 <span class="mymagpye-savings">Save £${(result.originalItem.price - deal.price).toFixed(2)}</span>
@@ -198,6 +226,14 @@ class MyMagPyeExtension {
         ` : '<p class="mymagpye-no-deals">No better deals found</p>'}
       </div>
     `).join('');
+    
+    // Add event listeners for deal items
+    container.querySelectorAll('.mymagpye-deal-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const url = item.dataset.url;
+        window.open(url, '_blank');
+      });
+    });
   }
 
   async removeItem(index) {
@@ -367,7 +403,7 @@ class MyMagPyeExtension {
     this.saveButton = document.createElement('button');
     this.saveButton.innerHTML = '🔍 Hunt for Better Deals';
     this.saveButton.className = 'mymagpye-save-btn';
-    this.saveButton.onclick = () => this.saveProduct();
+    this.saveButton.addEventListener('click', () => this.saveProduct());
     
     // Always position as floating button on the right side, halfway down
     this.saveButton.style.cssText = `
