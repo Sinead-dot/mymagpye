@@ -140,7 +140,7 @@ const Index = () => {
                 <Search className="w-10 h-10 text-orange-600" />
               </div>
               <h3 className="text-2xl font-bold text-slate-900 mb-4">SNAG</h3>
-              <p className="text-slate-600 mb-4">Automatically hunt across secondhand platforms like Vinted, eBay, and more to find your treasures.</p>
+              <p className="text-slate-600 mb-4">Automatically hunt across secondhand platforms like Vinted, eBay, and more to find your treasures secondhand</p>
               <div className="text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">
                 Smart AI matching finds the best deals
               </div>
