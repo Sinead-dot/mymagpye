@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Gem, Eye, Target, ShoppingBag } from "lucide-react";
+import { Gem, Eye, Target, ShoppingBag, User, LogOut } from "lucide-react";
 import TreasureCard from "@/components/TreasureCard";
 import ExtensionSimulator from "@/components/ExtensionSimulator";
 import HuntingStats from "@/components/HuntingStats";
@@ -11,9 +10,11 @@ import NotificationDemo from "@/components/NotificationDemo";
 import { useAuth } from '@/contexts/AuthContext';
 import AuthForm from '@/components/AuthForm';
 import UserProfile from '@/components/UserProfile';
+import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
+  const { toast } = useToast();
   const [treasures, setTreasures] = useState([
     {
       id: "1",
@@ -68,6 +69,22 @@ const Index = () => {
     setTreasures([newTreasure, ...treasures]);
   };
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Signed Out",
+        description: "You've been successfully signed out",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign out",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Calculate stats from treasures
   const stats = {
     spotted: treasures.length,
@@ -100,7 +117,34 @@ const Index = () => {
             </Button>
             <Button size="sm">Get Extension</Button>
           </div>
-          <div>
+          
+          <div className="flex items-center space-x-4">
+            {user ? (
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
+                  <User className="w-4 h-4 text-slate-600" />
+                  <span className="text-sm text-slate-700">{user.email}</span>
+                </div>
+                <Button
+                  onClick={handleSignOut}
+                  variant="outline"
+                  size="sm"
+                >
+                  <LogOut className="w-4 h-4 mr-1" />
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <Button variant="outline" size="sm">
+                  Sign In
+                </Button>
+                <Button size="sm">
+                  Sign Up
+                </Button>
+              </div>
+            )}
+            
             <img 
               src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" 
               alt="MyMagPye Logo" 
