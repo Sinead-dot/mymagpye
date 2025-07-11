@@ -125,7 +125,7 @@ const Index = () => {
                 <Target className="w-10 h-10 text-blue-600" />
               </div>
               <h3 className="text-2xl font-bold text-slate-900 mb-4">SPOT</h3>
-              <p className="text-slate-600 mb-4">Browse any retail websites and spot items you love.</p>
+              <p className="text-slate-600 mb-4">Browse web and spot items you love.</p>
               <div className="text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">
                 Click the MyMagPye button while shopping online
               </div>
