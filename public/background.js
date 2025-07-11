@@ -33,7 +33,7 @@ class BackgroundService {
 
   async forwardToWebApp(treasure) {
     try {
-      // Query all MyMagPye web app tabs
+      // Query MyMagPye web app tabs
       const tabs = await chrome.tabs.query({
         url: ['https://mymagpye.lovable.app/*', 'https://*.lovableproject.com/*']
       });

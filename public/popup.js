@@ -1,3 +1,4 @@
+
 // Popup script for MyMagPye extension - MVP Version
 class PopupManager {
   constructor() {
@@ -132,7 +133,8 @@ class PopupManager {
     const openAppButton = document.getElementById('openApp');
     if (openAppButton) {
       openAppButton.addEventListener('click', () => {
-        chrome.tabs.create({ url: chrome.runtime.getURL('index.html') });
+        // Open the actual MyMagPye web app
+        chrome.tabs.create({ url: 'https://mymagpye.lovable.app/' });
       });
     }
 
