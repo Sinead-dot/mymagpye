@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Gem, Eye, Target, ShoppingBag, User, LogOut } from "lucide-react";
+import { Link } from "react-router-dom";
 import TreasureCard from "@/components/TreasureCard";
 import ExtensionSimulator from "@/components/ExtensionSimulator";
 import HuntingStats from "@/components/HuntingStats";
@@ -124,11 +125,11 @@ const Index = () => {
                   Sign Out
                 </Button>
               </div> : <div className="flex items-center space-x-2">
-                <Button variant="outline" size="sm">
-                  Sign In
+                <Button asChild variant="outline" size="sm">
+                  <Link to="/signin">Sign In</Link>
                 </Button>
-                <Button size="sm">
-                  Sign Up
+                <Button asChild size="sm">
+                  <Link to="/signup">Sign Up</Link>
                 </Button>
               </div>}
           </div>
