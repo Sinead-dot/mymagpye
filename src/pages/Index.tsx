@@ -109,10 +109,7 @@ const Index = () => {
           <div className="flex items-center space-x-4">
             <img src="/lovable-uploads/ecbb7536-998c-4b9b-9641-b540f619fc6c.png" alt="MyMagPye Logo" className="w-[225px] h-[225px] object-contain" />
             <div className="flex space-x-4">
-              <Button variant="outline" size="sm">
-                How it Works
-              </Button>
-              <Button size="sm">Get Extension</Button>
+              <Button size="sm">Get Browser Extension</Button>
             </div>
           </div>
           
