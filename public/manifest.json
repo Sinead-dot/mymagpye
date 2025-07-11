@@ -33,7 +33,13 @@
         "https://*.next.co.uk/*",
         "https://*.johnlewis.com/*"
       ],
-      "js": ["content.js"],
+      "js": [
+        "modules/ProductExtractor.js",
+        "modules/SidebarManager.js", 
+        "modules/ButtonManager.js",
+        "modules/NotificationManager.js",
+        "content.js"
+      ],
       "css": ["content.css"],
       "run_at": "document_end"
     }
