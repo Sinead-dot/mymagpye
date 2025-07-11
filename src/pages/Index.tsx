@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +9,6 @@ import SpotButton from "@/components/SpotButton";
 import HuntingStats from "@/components/HuntingStats";
 import NotificationDemo from "@/components/NotificationDemo";
 import { Treasure } from "@/types/treasure";
-
 const Index = () => {
   const [treasures, setTreasures] = useState<Treasure[]>([{
     id: '1',
@@ -49,7 +47,6 @@ const Index = () => {
   }]);
   const [showDemo, setShowDemo] = useState(false);
   const [notifications, setNotifications] = useState([]);
-
   const handleSpotTreasure = () => {
     const newTreasure: Treasure = {
       id: Date.now().toString(),
@@ -85,7 +82,6 @@ const Index = () => {
       }]);
     }, 3000);
   };
-
   const stats = {
     spotted: treasures.length,
     hunting: treasures.filter(t => t.status === 'hunting').length,
@@ -93,7 +89,6 @@ const Index = () => {
     claimed: treasures.filter(t => t.status === 'claimed').length,
     totalSaved: treasures.reduce((sum, t) => t.status === 'found' || t.status === 'claimed' ? sum + (t.price - (t.foundPrice || 0)) : sum, 0)
   };
-
   return <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
       <header className="bg-white border-b border-slate-200 shadow-sm">
@@ -120,9 +115,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-slate-900 mb-4">How MyMagPye Works</h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Your clever magpie companion makes sustainable shopping effortless with our simple three-step process
-            </p>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">Your clever magpie companion makes secondhand shopping easy with our simple three-step process</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
@@ -132,9 +125,7 @@ const Index = () => {
                 <Target className="w-10 h-10 text-blue-600" />
               </div>
               <h3 className="text-2xl font-bold text-slate-900 mb-4">SPOT</h3>
-              <p className="text-slate-600 mb-4">
-                Browse any retail website and spot items you love. Our magpie eye identifies treasures worth hunting for.
-              </p>
+              <p className="text-slate-600 mb-4">Browse any retail websites and spot items you love. Our magpye searches for your secondhand treasure.</p>
               <div className="text-sm text-slate-500 bg-slate-50 p-3 rounded-lg">
                 Click the MyMagPye button while shopping online
               </div>
@@ -307,5 +298,4 @@ const Index = () => {
       </footer>
     </div>;
 };
-
 export default Index;
