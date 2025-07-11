@@ -7,7 +7,9 @@
   "permissions": [
     "storage",
     "activeTab",
-    "scripting"
+    "scripting",
+    "notifications",
+    "alarms"
   ],
   "host_permissions": [
     "https://api.ebay.com/*",
@@ -16,7 +18,9 @@
     "https://*.amazon.co.uk/*",
     "https://*.zara.com/*",
     "https://*.hm.com/*",
-    "https://*.asos.com/*"
+    "https://*.asos.com/*",
+    "https://*.next.co.uk/*",
+    "https://*.johnlewis.com/*"
   ],
   "content_scripts": [
     {
@@ -30,7 +34,8 @@
         "https://*.johnlewis.com/*"
       ],
       "js": ["content.js"],
-      "css": ["content.css"]
+      "css": ["content.css"],
+      "run_at": "document_end"
     }
   ],
   "background": {
