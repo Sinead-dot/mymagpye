@@ -133,8 +133,8 @@ class PopupManager {
     const openAppButton = document.getElementById('openApp');
     if (openAppButton) {
       openAppButton.addEventListener('click', () => {
-        // Fixed: Open the correct MyMagPye web app URL
-        chrome.tabs.create({ url: 'https://mymagpye.lovable.app' });
+        // Open the MyMagPye web app URL
+        chrome.tabs.create({ url: 'https://mymagpye.lovable.app/' });
         console.log('Opening MyMagPye web app');
       });
     }
