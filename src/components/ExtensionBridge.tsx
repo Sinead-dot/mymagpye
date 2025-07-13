@@ -14,6 +14,14 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Request saved treasures from extension on load
+    const requestSavedTreasures = () => {
+      console.log('🔗 Requesting saved treasures from extension...');
+      window.postMessage({
+        type: 'MYMAGPYE_GET_TREASURES'
+      }, '*');
+    };
+
     const handleExtensionMessage = (event: MessageEvent) => {
       console.log('🔗 ExtensionBridge received message:', event.data);
       
@@ -85,6 +93,11 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
 
     // Listen for messages from extension
     window.addEventListener('message', handleExtensionMessage);
+    
+    // Request saved treasures when component mounts and user is available
+    if (user) {
+      setTimeout(requestSavedTreasures, 1000); // Small delay to ensure extension is ready
+    }
     
     // Also listen for chrome extension messages if available
     if (typeof window !== 'undefined' && 'chrome' in window && (window as any).chrome?.runtime?.onMessage) {

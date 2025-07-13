@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import { Gem, Eye, Target, ShoppingBag, User, LogOut } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import TreasureCard from "@/components/TreasureCard";
-import ExtensionSimulator from "@/components/ExtensionSimulator";
 import ExtensionBridge from "@/components/ExtensionBridge";
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -207,14 +206,9 @@ const Index = () => {
       </section>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Extension Simulator */}
-          <div className="space-y-6">
-            <ExtensionSimulator onProductSpotted={handleProductSpotted} />
-          </div>
-
+        <div className="flex justify-center">
           {/* Treasures */}
-          <div className="space-y-6">
+          <div className="w-full max-w-2xl space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
