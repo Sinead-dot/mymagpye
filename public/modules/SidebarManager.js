@@ -57,7 +57,7 @@ class SidebarManager {
       </div>
       <div class="mymagpye-sidebar-footer">
         <button class="mymagpye-full-app-btn">
-          📱 Open Full App
+          Open MyMagPye
         </button>
       </div>
     `;
@@ -87,7 +87,7 @@ class SidebarManager {
     
     const fullAppBtn = this.sidebar.querySelector('.mymagpye-full-app-btn');
     fullAppBtn.addEventListener('click', () => {
-      chrome.tabs.create({ url: chrome.runtime.getURL('index.html') });
+      chrome.tabs.create({ url: 'https://mymagpye.lovable.app/' });
     });
 
     // Handle window resize
@@ -281,7 +281,7 @@ class SidebarManager {
     container.querySelectorAll('.mymagpye-hunt-result').forEach(item => {
       item.addEventListener('click', () => {
         // Open full app to see all deals
-        chrome.tabs.create({ url: chrome.runtime.getURL('index.html') });
+        chrome.tabs.create({ url: 'https://mymagpye.lovable.app/' });
       });
     });
   }
