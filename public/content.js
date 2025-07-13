@@ -250,5 +250,20 @@ class MyMagPyeExtension {
   }
 }
 
-// Initialize the extension (modules are already loaded via manifest)
-window.myMagPyeExtension = new MyMagPyeExtension();
+// Initialize the extension after ensuring all classes are loaded
+function initializeExtension() {
+  // Check if all required classes are available
+  if (typeof ProductExtractor === 'undefined' || 
+      typeof SidebarManager === 'undefined' || 
+      typeof NotificationManager === 'undefined') {
+    console.log('MyMagPye: Waiting for modules to load...');
+    setTimeout(initializeExtension, 100);
+    return;
+  }
+  
+  console.log('MyMagPye: All modules loaded, initializing extension...');
+  window.myMagPyeExtension = new MyMagPyeExtension();
+}
+
+// Start initialization
+initializeExtension();
