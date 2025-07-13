@@ -20,7 +20,9 @@
     "https://*.hm.com/*",
     "https://*.asos.com/*",
     "https://*.next.co.uk/*",
-    "https://*.johnlewis.com/*"
+    "https://*.johnlewis.com/*",
+    "https://mymagpye.lovable.app/*",
+    "https://*.lovable.app/*"
   ],
   "content_scripts": [
     {
