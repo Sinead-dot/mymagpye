@@ -177,9 +177,13 @@ class SidebarManager {
 
   async loadSidebarData() {
     try {
+      console.log('📊 Loading sidebar data...');
       const result = await chrome.storage.local.get(['savedItems', 'huntResults']);
       const savedItems = result.savedItems || [];
       const huntResults = result.huntResults || {};
+      
+      console.log('📊 Saved items found:', savedItems.length);
+      console.log('📊 Hunt results found:', Object.keys(huntResults).length);
       
       this.displaySavedItems(savedItems);
       this.displayHuntResults(huntResults);

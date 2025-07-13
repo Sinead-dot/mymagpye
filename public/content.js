@@ -110,7 +110,10 @@ class MyMagPyeExtension {
       
       // Refresh sidebar data if possible
       if (this.isExtensionContextValid()) {
+        console.log('🔄 Refreshing sidebar data after saving...');
         this.sidebarManager.loadSidebarData();
+      } else {
+        console.log('⚠️ Cannot refresh sidebar - extension context invalid');
       }
       
       console.log('✅ Product saved:', this.productData.title);
