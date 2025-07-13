@@ -14,12 +14,34 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    console.log('🔗 ExtensionBridge initializing...', { user: !!user, treasureCount: treasures.length });
+    
     // Request saved treasures from extension on load
     const requestSavedTreasures = () => {
       console.log('🔗 Requesting saved treasures from extension...');
+      
+      // Try multiple communication methods
+      // Method 1: postMessage to window
       window.postMessage({
         type: 'MYMAGPYE_GET_TREASURES'
       }, '*');
+      
+      // Method 2: Try Chrome extension API if available
+      if (typeof window !== 'undefined' && 'chrome' in window && (window as any).chrome?.runtime) {
+        try {
+          (window as any).chrome.runtime.sendMessage({
+            action: 'getTreasures'
+          }, (response: any) => {
+            console.log('🔗 Chrome extension response:', response);
+            if (response && response.treasures) {
+              console.log('📦 Received treasures from Chrome extension:', response.treasures);
+              // Process treasures if needed
+            }
+          });
+        } catch (error) {
+          console.log('🔗 Chrome extension API not available:', error);
+        }
+      }
     };
 
     const handleExtensionMessage = (event: MessageEvent) => {
@@ -27,6 +49,7 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
       
       // Only accept messages from the same origin or extension
       if (event.origin !== window.location.origin && !event.data?.type?.startsWith('MYMAGPYE_')) {
+        console.log('🔗 Ignoring message from:', event.origin);
         return;
       }
 
@@ -36,6 +59,7 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
         console.log('🏴‍☠️ Saving treasure from extension:', treasure);
         
         if (user) {
+          console.log('✅ User authenticated, adding treasure...');
           addTreasure(treasure);
           
           toast({
@@ -51,6 +75,7 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
             }, '*');
           }
         } else {
+          console.log('❌ User not authenticated');
           toast({
             title: "Sign In Required",
             description: "Please sign in to save treasures from the extension",
@@ -81,13 +106,16 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
           confidence: treasure.confidence
         }));
         
+        console.log('📤 Sending treasures to extension:', formattedTreasures.length);
+        
         // Send treasures back to extension sidebar
         window.postMessage({
           type: 'MYMAGPYE_TREASURES_RESPONSE',
           treasures: formattedTreasures
         }, '*');
-        
-        console.log('📤 Sent treasures to extension:', formattedTreasures.length);
+      } else if (event.data?.type === 'MYMAGPYE_EXTENSION_READY') {
+        console.log('🔗 Extension reported ready, requesting treasures...');
+        setTimeout(requestSavedTreasures, 500);
       }
     };
 
@@ -96,7 +124,13 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
     
     // Request saved treasures when component mounts and user is available
     if (user) {
+      console.log('👤 User found, requesting treasures in 1 second...');
       setTimeout(requestSavedTreasures, 1000); // Small delay to ensure extension is ready
+      
+      // Also try again after a longer delay in case extension loads slowly
+      setTimeout(requestSavedTreasures, 3000);
+    } else {
+      console.log('👤 No user found, skipping treasure request');
     }
     
     // Also listen for chrome extension messages if available
@@ -112,6 +146,20 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
           } as MessageEvent);
           
           sendResponse({ success: true });
+        } else if (request.action === 'getTreasures') {
+          console.log('🔍 Chrome extension requesting treasures directly...');
+          const formattedTreasures = treasures.map(treasure => ({
+            title: treasure.title,
+            brand: treasure.brand,
+            price: treasure.price,
+            image: treasure.image,
+            url: treasure.url,
+            platform: treasure.platform,
+            status: treasure.status,
+            confidence: treasure.confidence
+          }));
+          
+          sendResponse({ treasures: formattedTreasures });
         }
       };
       

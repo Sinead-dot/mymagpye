@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ import ExtensionBridge from "@/components/ExtensionBridge";
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useTreasures } from '@/hooks/useTreasures';
+import ExtensionDebugPanel from "@/components/ExtensionDebugPanel";
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
@@ -207,6 +207,13 @@ const Index = () => {
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex justify-center">
+          {/* Debug Panel - Temporary for testing */}
+          {user && (
+            <div className="w-full max-w-2xl mb-6">
+              <ExtensionDebugPanel />
+            </div>
+          )}
+          
           {/* Treasures */}
           <div className="w-full max-w-2xl space-y-6">
             <Card>
