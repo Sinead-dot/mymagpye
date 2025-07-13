@@ -160,8 +160,20 @@ class SidebarManager {
     const huntBtn = container.querySelector('#mymagpye-quick-hunt');
     if (huntBtn) {
       huntBtn.addEventListener('click', () => {
-        if (window.myMagPyeExtension) {
+        console.log('🔍 Hunt button clicked, checking extension...');
+        if (window.myMagPyeExtension && typeof window.myMagPyeExtension.saveProduct === 'function') {
+          console.log('✅ Extension found, calling saveProduct...');
           window.myMagPyeExtension.saveProduct();
+        } else {
+          console.error('❌ MyMagPye extension not available:', {
+            extensionExists: !!window.myMagPyeExtension,
+            saveProductExists: !!(window.myMagPyeExtension && window.myMagPyeExtension.saveProduct)
+          });
+          // Show user-friendly error
+          if (typeof NotificationManager !== 'undefined') {
+            const notificationManager = new NotificationManager();
+            notificationManager.showNotification('Extension not ready. Please refresh the page.', 'error');
+          }
         }
       });
     }
