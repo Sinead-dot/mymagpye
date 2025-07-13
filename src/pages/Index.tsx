@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,12 +9,15 @@ import ExtensionBridge from "@/components/ExtensionBridge";
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useTreasures } from '@/hooks/useTreasures';
+import { useEbaySearch } from '@/hooks/useEbaySearch';
 import ExtensionDebugPanel from "@/components/ExtensionDebugPanel";
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
-  const { treasures, isLoading: treasuresLoading, addTreasure, deleteTreasure } = useTreasures();
+  const { treasures, isLoading: treasuresLoading, addTreasure, deleteTreasure, updateTreasure } = useTreasures();
+  const { isSearching, searchEbay } = useEbaySearch();
+  const [huntingTreasures, setHuntingTreasures] = useState<Set<string>>(new Set());
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Handle treasure saving from extension URL parameters
@@ -74,6 +77,54 @@ const Index = () => {
     };
 
     addTreasure(newTreasure);
+  };
+
+  const handleStartHunt = async (treasureId: string) => {
+    const treasure = treasures.find(t => t.id === treasureId);
+    if (!treasure) return;
+
+    // Add to hunting set
+    setHuntingTreasures(prev => new Set(prev).add(treasureId));
+
+    // Search eBay for the treasure
+    const results = await searchEbay(treasure.title, treasure.price);
+    
+    if (results && results.items.length > 0) {
+      // Find the best deal (lowest price)
+      const bestDeal = results.items.reduce((best, current) => 
+        current.price < best.price ? current : best
+      );
+
+      // Update treasure with found price and mark as found
+      await updateTreasure({
+        id: treasureId,
+        updates: {
+          foundPrice: bestDeal.price,
+          status: 'found',
+          platform: 'eBay'
+        }
+      });
+
+      toast({
+        title: "Treasure Found! 💎",
+        description: `Found ${treasure.title} for $${bestDeal.price} on eBay (${((treasure.price - bestDeal.price) / treasure.price * 100).toFixed(1)}% savings)`,
+      });
+    }
+
+    // Remove from hunting set
+    setHuntingTreasures(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(treasureId);
+      return newSet;
+    });
+  };
+
+  const handleStopHunt = (treasureId: string) => {
+    setHuntingTreasures(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(treasureId);
+      return newSet;
+    });
   };
 
   const handleSignOut = async () => {
@@ -247,6 +298,9 @@ const Index = () => {
                         key={treasure.id} 
                         treasure={treasure} 
                         onDelete={deleteTreasure}
+                        onStartHunt={handleStartHunt}
+                        onStopHunt={handleStopHunt}
+                        isHunting={huntingTreasures.has(treasure.id)}
                       />
                     ))}
                   </div>
