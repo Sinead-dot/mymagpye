@@ -250,24 +250,5 @@ class MyMagPyeExtension {
   }
 }
 
-// Load required modules and initialize
-const loadScript = (src) => {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = chrome.runtime.getURL(src);
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-};
-
-// Load all modules and then initialize the extension
-Promise.all([
-  loadScript('modules/ProductExtractor.js'),
-  loadScript('modules/SidebarManager.js'),
-  loadScript('modules/NotificationManager.js')
-]).then(() => {
-  window.myMagPyeExtension = new MyMagPyeExtension();
-}).catch(error => {
-  console.error('Failed to load MyMagPye modules:', error);
-});
+// Initialize the extension (modules are already loaded via manifest)
+window.myMagPyeExtension = new MyMagPyeExtension();
