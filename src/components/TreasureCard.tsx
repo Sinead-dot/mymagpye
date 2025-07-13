@@ -10,10 +10,11 @@ interface TreasureCardProps {
   treasure: Treasure;
   onStartHunt?: (treasureId: string) => void;
   onStopHunt?: (treasureId: string) => void;
+  onDelete?: (treasureId: string) => void;
   isHunting?: boolean;
 }
 
-const TreasureCard: React.FC<TreasureCardProps> = ({ treasure, onStartHunt, onStopHunt, isHunting = false }) => {
+const TreasureCard: React.FC<TreasureCardProps> = ({ treasure, onStartHunt, onStopHunt, onDelete, isHunting = false }) => {
   const [huntingProgress, setHuntingProgress] = useState(0);
 
   useEffect(() => {
@@ -185,7 +186,12 @@ const TreasureCard: React.FC<TreasureCardProps> = ({ treasure, onStartHunt, onSt
                 </>
               )}
 
-              <Button size="sm" variant="ghost" className="px-2">
+              <Button 
+                size="sm" 
+                variant="ghost" 
+                className="px-2 hover:bg-red-50 hover:text-red-600"
+                onClick={() => onDelete?.(treasure.id)}
+              >
                 <Trash2 className="w-3 h-3" />
               </Button>
             </div>

@@ -14,7 +14,7 @@ import ExtensionDebugPanel from "@/components/ExtensionDebugPanel";
 const Index = () => {
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
-  const { treasures, isLoading: treasuresLoading, addTreasure } = useTreasures();
+  const { treasures, isLoading: treasuresLoading, addTreasure, deleteTreasure } = useTreasures();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Handle treasure saving from extension URL parameters
@@ -243,7 +243,11 @@ const Index = () => {
                 ) : (
                   <div className="space-y-4">
                     {treasures.map(treasure => (
-                      <TreasureCard key={treasure.id} treasure={treasure} />
+                      <TreasureCard 
+                        key={treasure.id} 
+                        treasure={treasure} 
+                        onDelete={deleteTreasure}
+                      />
                     ))}
                   </div>
                 )}
