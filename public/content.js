@@ -74,19 +74,28 @@ class MyMagPyeExtension {
     try {
       // Check if extension context is still valid
       if (!this.isExtensionContextValid()) {
-        console.warn('Extension context invalidated - falling back to web app only');
+        console.warn('Extension context invalidated - opening web app for saving');
         
-        // Try to save to web app only
-        const savedToWebApp = await this.saveToWebApp(this.productData);
+        // Open web app in new tab and pass the product data
+        const webAppUrl = 'https://mymagpye.lovable.app/';
+        const productParams = new URLSearchParams({
+          action: 'save_treasure',
+          title: this.productData.title,
+          brand: this.productData.brand || 'Unknown Brand',
+          price: this.productData.price || 0,
+          image: this.productData.image || '/placeholder.svg',
+          url: this.productData.url,
+          platform: this.productData.platform
+        });
         
-        if (savedToWebApp) {
-          this.notificationManager.showNotification('Treasure saved to MyMagPye! 🏴‍☠️', 'success');
-          if (huntBtn) {
-            huntBtn.textContent = '✅ Saved to MyMagPye';
-          }
-        } else {
-          throw new Error('Failed to save to web app and extension context is invalid');
+        window.open(`${webAppUrl}?${productParams.toString()}`, '_blank');
+        
+        this.notificationManager.showNotification('Opening MyMagPye web app to save this treasure!', 'success');
+        
+        if (huntBtn) {
+          huntBtn.textContent = '✅ Opening Web App';
         }
+        return;
       } else {
         // Try to save to web app database first
         const savedToWebApp = await this.saveToWebApp(this.productData);

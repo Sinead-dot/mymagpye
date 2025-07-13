@@ -1,10 +1,10 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Gem, Eye, Target, ShoppingBag, User, LogOut } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import TreasureCard from "@/components/TreasureCard";
 import ExtensionSimulator from "@/components/ExtensionSimulator";
 import ExtensionBridge from "@/components/ExtensionBridge";
@@ -16,6 +16,42 @@ const Index = () => {
   const { user, loading, signOut } = useAuth();
   const { toast } = useToast();
   const { treasures, isLoading: treasuresLoading, addTreasure } = useTreasures();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Handle treasure saving from extension URL parameters
+  useEffect(() => {
+    if (user && searchParams.get('action') === 'save_treasure') {
+      const title = searchParams.get('title');
+      const brand = searchParams.get('brand');
+      const price = searchParams.get('price');
+      const image = searchParams.get('image');
+      const url = searchParams.get('url');
+      const platform = searchParams.get('platform');
+
+      if (title && url) {
+        const newTreasure = {
+          title,
+          brand: brand || "Unknown Brand",
+          price: price ? parseFloat(price) : 0,
+          image: image || "/placeholder.svg",
+          url,
+          platform: platform || "Unknown Platform",
+          status: 'hunting' as const,
+          confidence: 0
+        };
+
+        addTreasure(newTreasure);
+        
+        toast({
+          title: "Treasure Saved! 🏴‍☠️",
+          description: `${title} has been added to your collection`,
+        });
+
+        // Clear the URL parameters
+        setSearchParams({});
+      }
+    }
+  }, [user, searchParams, addTreasure, toast, setSearchParams]);
 
   const handleProductSpotted = (product: any) => {
     if (!user) {
