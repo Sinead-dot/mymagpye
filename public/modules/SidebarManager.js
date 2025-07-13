@@ -190,17 +190,86 @@ class SidebarManager {
   async loadSidebarData() {
     try {
       console.log('📊 Loading sidebar data...');
-      const result = await chrome.storage.local.get(['savedItems', 'huntResults']);
-      const savedItems = result.savedItems || [];
-      const huntResults = result.huntResults || {};
       
-      console.log('📊 Saved items found:', savedItems.length);
-      console.log('📊 Hunt results found:', Object.keys(huntResults).length);
+      // First try to fetch from web app database
+      const webAppItems = await this.fetchFromWebApp();
+      console.log('📊 Web app items found:', webAppItems.length);
       
-      this.displaySavedItems(savedItems);
-      this.displayHuntResults(huntResults);
+      // Then get local storage items as fallback
+      let localItems = [];
+      try {
+        if (this.isExtensionContextValid()) {
+          const result = await chrome.storage.local.get(['savedItems', 'huntResults']);
+          localItems = result.savedItems || [];
+          const huntResults = result.huntResults || {};
+          console.log('📊 Local storage items found:', localItems.length);
+          console.log('📊 Hunt results found:', Object.keys(huntResults).length);
+          this.displayHuntResults(huntResults);
+        }
+      } catch (storageError) {
+        console.log('📊 Chrome storage not available:', storageError);
+      }
+      
+      // Combine web app items and local items (web app takes priority)
+      const allItems = [...webAppItems, ...localItems];
+      
+      // Remove duplicates based on URL
+      const uniqueItems = allItems.filter((item, index, self) => 
+        index === self.findIndex(t => t.url === item.url)
+      );
+      
+      console.log('📊 Total unique items to display:', uniqueItems.length);
+      this.displaySavedItems(uniqueItems);
+      
     } catch (error) {
       console.error('Error loading sidebar data:', error);
+      // Fallback to showing empty state
+      this.displaySavedItems([]);
+    }
+  }
+
+  // Check if extension context is still valid
+  isExtensionContextValid() {
+    try {
+      return typeof chrome !== 'undefined' && 
+             chrome.runtime && 
+             chrome.runtime.id;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  async fetchFromWebApp() {
+    try {
+      console.log('🌐 Fetching treasures from web app...');
+      
+      // Send message to web app to get treasures
+      return new Promise((resolve) => {
+        // Set a timeout to avoid hanging forever
+        const timeout = setTimeout(() => {
+          console.log('🌐 Web app fetch timeout');
+          resolve([]);
+        }, 2000);
+        
+        const messageHandler = (event) => {
+          if (event.data?.type === 'MYMAGPYE_TREASURES_RESPONSE') {
+            clearTimeout(timeout);
+            window.removeEventListener('message', messageHandler);
+            console.log('🌐 Received treasures from web app:', event.data.treasures?.length || 0);
+            resolve(event.data.treasures || []);
+          }
+        };
+        
+        window.addEventListener('message', messageHandler);
+        
+        // Request treasures from web app
+        window.postMessage({
+          type: 'MYMAGPYE_GET_TREASURES'
+        }, '*');
+      });
+    } catch (error) {
+      console.error('🌐 Error fetching from web app:', error);
+      return [];
     }
   }
 

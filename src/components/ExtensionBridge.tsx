@@ -10,7 +10,7 @@ interface ExtensionBridgeProps {
 
 const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
   const { user } = useAuth();
-  const { addTreasure } = useTreasures();
+  const { treasures, addTreasure } = useTreasures();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -58,6 +58,28 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
             }, '*');
           }
         }
+      } else if (event.data?.type === 'MYMAGPYE_GET_TREASURES') {
+        console.log('🔍 Extension requesting treasures list...');
+        
+        // Convert treasures to format expected by extension
+        const formattedTreasures = treasures.map(treasure => ({
+          title: treasure.title,
+          brand: treasure.brand,
+          price: treasure.price,
+          image: treasure.image,
+          url: treasure.url,
+          platform: treasure.platform,
+          status: treasure.status,
+          confidence: treasure.confidence
+        }));
+        
+        // Send treasures back to extension sidebar
+        window.postMessage({
+          type: 'MYMAGPYE_TREASURES_RESPONSE',
+          treasures: formattedTreasures
+        }, '*');
+        
+        console.log('📤 Sent treasures to extension:', formattedTreasures.length);
       }
     };
 
@@ -93,7 +115,7 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
     return () => {
       window.removeEventListener('message', handleExtensionMessage);
     };
-  }, [user, addTreasure, toast]);
+  }, [user, treasures, addTreasure, toast]);
 
   // This component doesn't render anything, it just handles communication
   return null;
