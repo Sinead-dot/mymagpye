@@ -256,16 +256,43 @@ class MyMagPyeExtension {
 // Initialize the extension after ensuring all classes are loaded
 function initializeExtension() {
   // Check if all required classes are available
-  if (typeof ProductExtractor === 'undefined' || 
-      typeof SidebarManager === 'undefined' || 
-      typeof NotificationManager === 'undefined') {
-    console.log('MyMagPye: Waiting for modules to load...');
+  const missingClasses = [];
+  
+  if (typeof ProductExtractor === 'undefined') {
+    missingClasses.push('ProductExtractor');
+  }
+  if (typeof SidebarManager === 'undefined') {
+    missingClasses.push('SidebarManager');
+  }
+  if (typeof NotificationManager === 'undefined') {
+    missingClasses.push('NotificationManager');
+  }
+  
+  if (missingClasses.length > 0) {
+    console.log('MyMagPye: Waiting for modules to load...', missingClasses);
+    
+    // Check if we've been trying for too long (10 seconds)
+    if (!initializeExtension.startTime) {
+      initializeExtension.startTime = Date.now();
+    }
+    
+    const elapsed = Date.now() - initializeExtension.startTime;
+    if (elapsed > 10000) {
+      console.error('Failed to load MyMagPye modules:', missingClasses.join(', '));
+      return;
+    }
+    
     setTimeout(initializeExtension, 100);
     return;
   }
   
   console.log('MyMagPye: All modules loaded, initializing extension...');
-  window.myMagPyeExtension = new MyMagPyeExtension();
+  try {
+    window.myMagPyeExtension = new MyMagPyeExtension();
+    console.log('✅ MyMagPye extension initialized successfully');
+  } catch (error) {
+    console.error('❌ Failed to initialize MyMagPye extension:', error);
+  }
 }
 
 // Start initialization
