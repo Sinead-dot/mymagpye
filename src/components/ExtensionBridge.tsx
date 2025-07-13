@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { useTreasures } from '@/hooks/useTreasures';
 import { useAuth } from '@/contexts/AuthContext';
@@ -57,7 +56,7 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
       }
     };
 
-    const handleExtensionMessage = (event: MessageEvent) => {
+    const handleExtensionMessage = async (event: MessageEvent) => {
       console.log('🔗 ExtensionBridge received message:', event.data);
       
       // Only accept messages from the same origin or extension
@@ -68,23 +67,46 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
 
       if (event.data?.type === 'MYMAGPYE_SAVE_TREASURE') {
         const treasure = event.data.treasure;
+        const saveId = event.data.saveId;
         
-        console.log('🏴‍☠️ Saving treasure from extension:', treasure);
+        console.log('🏴‍☠️ Saving treasure from extension:', treasure, 'saveId:', saveId);
         
         if (user) {
-          console.log('✅ User authenticated, adding treasure...');
-          addTreasure(treasure);
-          
-          toast({
-            title: "Treasure Saved! 🏴‍☠️",
-            description: `${treasure.title} has been added to your collection`,
-          });
-          
-          // Send confirmation back to extension
-          if (event.source) {
-            (event.source as Window).postMessage({
-              type: 'MYMAGPYE_TREASURE_SAVED',
-              success: true
+          try {
+            console.log('✅ User authenticated, adding treasure...');
+            await addTreasure({
+              title: treasure.title,
+              brand: treasure.brand,
+              price: treasure.price,
+              image: treasure.image,
+              url: treasure.url,
+              platform: treasure.platform,
+              status: treasure.status || 'hunting',
+              confidence: treasure.confidence
+            });
+            
+            toast({
+              title: "Treasure Saved! 🏴‍☠️",
+              description: `${treasure.title} has been added to your collection`,
+            });
+            
+            // Send confirmation back to extension with saveId
+            window.postMessage({
+              type: 'MYMAGPYE_SAVE_CONFIRMATION',
+              saveId: saveId,
+              success: true,
+              message: 'Treasure saved successfully'
+            }, '*');
+            
+          } catch (error) {
+            console.error('❌ Error saving treasure:', error);
+            
+            // Send error back to extension with saveId
+            window.postMessage({
+              type: 'MYMAGPYE_SAVE_CONFIRMATION',
+              saveId: saveId,
+              success: false,
+              error: error instanceof Error ? error.message : 'Unknown error'
             }, '*');
           }
         } else {
@@ -95,14 +117,13 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
             variant: "destructive"
           });
           
-          // Send error back to extension
-          if (event.source) {
-            (event.source as Window).postMessage({
-              type: 'MYMAGPYE_TREASURE_SAVED',
-              success: false,
-              error: 'User not authenticated'
-            }, '*');
-          }
+          // Send error back to extension with saveId
+          window.postMessage({
+            type: 'MYMAGPYE_SAVE_CONFIRMATION',
+            saveId: saveId,
+            success: false,
+            error: 'User not authenticated'
+          }, '*');
         }
       } else if (event.data?.type === 'MYMAGPYE_GET_TREASURES') {
         console.log('🔍 Extension requesting treasures list...');
@@ -148,11 +169,11 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
     
     // Also listen for chrome extension messages if available
     if (typeof window !== 'undefined' && 'chrome' in window && (window as any).chrome?.runtime?.onMessage) {
-      const chromeMessageHandler = (request: any, sender: any, sendResponse: any) => {
+      const chromeMessageHandler = async (request: any, sender: any, sendResponse: any) => {
         console.log('🔗 Chrome extension message received:', request);
         
         if (request.type === 'MYMAGPYE_SAVE_TREASURE') {
-          handleExtensionMessage({
+          await handleExtensionMessage({
             data: request,
             origin: window.location.origin,
             source: null

@@ -160,9 +160,13 @@ class MyMagPyeExtension {
 
   async saveToWebApp(productData) {
     try {
+      // Generate unique ID for this save attempt
+      const saveId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      
       // Send message to web app via postMessage
       const messageData = {
         type: 'MYMAGPYE_SAVE_TREASURE',
+        saveId: saveId,
         treasure: {
           title: productData.title,
           brand: productData.brand || 'Unknown Brand',
@@ -175,24 +179,54 @@ class MyMagPyeExtension {
         }
       };
 
-      // Post message to all frames (including the main web app)
-      window.postMessage(messageData, '*');
-      
-      // Also try to communicate with any MyMagPye web app tabs if extension context is valid
-      if (this.isExtensionContextValid()) {
-        try {
-          const response = await chrome.runtime.sendMessage({
-            action: 'saveToWebApp',
-            treasure: messageData.treasure
-          });
-          console.log('Chrome extension response:', response);
-        } catch (chromeError) {
-          console.log('Chrome extension messaging failed (expected if context invalidated):', chromeError);
-          // Don't throw here as postMessage might still work
-        }
-      }
+      // Set up promise to wait for confirmation
+      return new Promise((resolve) => {
+        let timeoutId;
+        let confirmationReceived = false;
 
-      return true;
+        // Listen for confirmation from web app
+        const handleConfirmation = (event) => {
+          if (event.data && 
+              event.data.type === 'MYMAGPYE_SAVE_CONFIRMATION' && 
+              event.data.saveId === saveId) {
+            confirmationReceived = true;
+            window.removeEventListener('message', handleConfirmation);
+            if (timeoutId) clearTimeout(timeoutId);
+            console.log('Save confirmation received from web app');
+            resolve(true);
+          }
+        };
+
+        // Start listening for confirmation
+        window.addEventListener('message', handleConfirmation);
+
+        // Set timeout - if no confirmation in 3 seconds, assume failure
+        timeoutId = setTimeout(() => {
+          if (!confirmationReceived) {
+            window.removeEventListener('message', handleConfirmation);
+            console.log('No confirmation received from web app, falling back to local storage');
+            resolve(false);
+          }
+        }, 3000);
+
+        // Post message to web app
+        window.postMessage(messageData, '*');
+        
+        // Also try Chrome extension messaging if context is valid
+        if (this.isExtensionContextValid()) {
+          try {
+            chrome.runtime.sendMessage({
+              action: 'saveToWebApp',
+              treasure: messageData.treasure,
+              saveId: saveId
+            }).catch(chromeError => {
+              console.log('Chrome extension messaging failed:', chromeError);
+            });
+          } catch (chromeError) {
+            console.log('Chrome extension messaging failed:', chromeError);
+          }
+        }
+      });
     } catch (error) {
       console.error('Failed to save to web app:', error);
       return false;
