@@ -8,6 +8,7 @@ import { Chrome, MessageCircle, Database } from "lucide-react";
 const ExtensionDebugPanel: React.FC = () => {
   const [lastMessage, setLastMessage] = useState<string>('None');
   const [extensionStatus, setExtensionStatus] = useState<string>('Unknown');
+  const [extensionDetected, setExtensionDetected] = useState<boolean>(false);
 
   const testExtensionConnection = () => {
     console.log('🔧 Testing extension connection...');
@@ -60,6 +61,35 @@ const ExtensionDebugPanel: React.FC = () => {
     setLastMessage('Sent test treasure');
   };
 
+  const checkExtensionStatus = () => {
+    console.log('🔧 Checking extension status...');
+    
+    // Check for extension globals
+    const extensionExists = !!(window as any).myMagPyeExtension;
+    const webAppFlag = !!(window as any).MYMAGPYE_WEB_APP_READY;
+    const sidebar = document.querySelector('.mymagpye-sidebar');
+    
+    console.log('Extension check:', {
+      extensionExists,
+      webAppFlag,
+      sidebarExists: !!sidebar,
+      chromeAvailable: typeof (window as any).chrome !== 'undefined'
+    });
+    
+    setExtensionDetected(extensionExists);
+    
+    if (extensionExists) {
+      setExtensionStatus('Extension Active');
+      setLastMessage('Extension detected on page');
+    } else if (sidebar) {
+      setExtensionStatus('Sidebar Detected');
+      setLastMessage('Extension sidebar found but object missing');
+    } else {
+      setExtensionStatus('Not Detected');
+      setLastMessage('No extension activity detected');
+    }
+  };
+
   return (
     <Card className="border-orange-200 bg-orange-50">
       <CardHeader>
@@ -76,7 +106,17 @@ const ExtensionDebugPanel: React.FC = () => {
           <strong>Last Message:</strong> {lastMessage}
         </div>
         
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-2">
+          <Button 
+            onClick={checkExtensionStatus}
+            variant="outline"
+            size="sm"
+            className="justify-start"
+          >
+            <Chrome className="w-4 h-4 mr-2" />
+            Check Ext
+          </Button>
+          
           <Button 
             onClick={testExtensionConnection}
             variant="outline"
@@ -84,7 +124,7 @@ const ExtensionDebugPanel: React.FC = () => {
             className="justify-start"
           >
             <MessageCircle className="w-4 h-4 mr-2" />
-            Test Connection
+            Test Conn
           </Button>
           
           <Button 

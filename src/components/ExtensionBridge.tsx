@@ -14,19 +14,32 @@ const ExtensionBridge: React.FC<ExtensionBridgeProps> = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    console.log('🔗 ExtensionBridge initializing...', { user: !!user, treasureCount: treasures.length });
+    console.log('🔗 ExtensionBridge initializing...', { 
+      user: !!user, 
+      treasureCount: treasures.length,
+      domain: window.location.hostname,
+      pathname: window.location.pathname
+    });
+    
+    // Set up global flag for extension detection
+    (window as any).MYMAGPYE_WEB_APP_READY = true;
+    (window as any).MYMAGPYE_USER_AUTHENTICATED = !!user;
     
     // Request saved treasures from extension on load
     const requestSavedTreasures = () => {
       console.log('🔗 Requesting saved treasures from extension...');
       
-      // Try multiple communication methods
       // Method 1: postMessage to window
       window.postMessage({
         type: 'MYMAGPYE_GET_TREASURES'
       }, '*');
       
-      // Method 2: Try Chrome extension API if available
+      // Method 2: Custom event for content scripts
+      document.dispatchEvent(new CustomEvent('MYMAGPYE_GET_TREASURES', {
+        detail: { requestedBy: 'web-app' }
+      }));
+      
+      // Method 3: Try Chrome extension API if available
       if (typeof window !== 'undefined' && 'chrome' in window && (window as any).chrome?.runtime) {
         try {
           (window as any).chrome.runtime.sendMessage({
